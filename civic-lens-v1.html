@@ -1,0 +1,948 @@
+import { useState, useRef, useEffect } from 'react';
+
+const politicianData = {
+  poilievre: {
+    id: 'poilievre',
+    name: 'Pierre Poilievre',
+    party: 'Conservative',
+    position: 'Leader of the Opposition',
+    color: '#1e40af',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    tagline: 'Axe the Tax, Build the Homes, Fix the Budget',
+    bio: 'MP since 2004, Opposition Leader since 2022. Known for populist rhetoric and fiscal conservatism.',
+    categories: ['Economy', 'Housing', 'Energy', 'Immigration', 'Governance'],
+    priorities: {
+      'Economy': {
+        icon: '💰',
+        policies: [
+          { text: 'Eliminate carbon tax entirely', cost: '$25B revenue loss', impact: 'Major tax relief, climate funding gap', connects: ['climate', 'affordability'] },
+          { text: 'Pay-as-you-go budget law', cost: 'Budget neutral', impact: 'Restricts new spending', connects: ['fiscal'] },
+          { text: 'Balance federal budget', cost: 'Spending cuts needed', impact: 'Service reductions likely', connects: ['healthcare', 'social'] },
+          { text: 'Canada First Reinvestment Tax Cut', cost: '$7B', impact: 'Keep capital in Canada vs Trump tariffs', connects: ['trade', 'business'] }
+        ]
+      },
+      'Housing': {
+        icon: '🏠',
+        policies: [
+          { text: 'Remove GST on homes under $1M', cost: '$5B revenue loss', impact: 'Savings for first-time buyers', connects: ['affordability'] },
+          { text: 'Force cities to increase building 15%', cost: 'Enforcement costs', impact: 'Municipal tension, more supply', connects: ['municipal', 'supply'] },
+          { text: 'Link immigration to housing supply', cost: 'Policy shift', impact: 'Slower population growth', connects: ['immigration', 'planning'] },
+          { text: 'Sell federal lands for development', cost: 'Asset loss', impact: 'One-time supply boost', connects: ['development'] }
+        ]
+      },
+      'Energy': {
+        icon: '⚡',
+        policies: [
+          { text: 'Approve pipelines in all directions', cost: 'Industry gains', impact: 'Emissions increase, jobs created', connects: ['climate', 'jobs'] },
+          { text: 'Repeal Bill C-69 (impact assessment)', cost: 'Regulatory loss', impact: 'Faster approvals, less oversight', connects: ['environment'] },
+          { text: 'Technology over carbon pricing', cost: 'Investment TBD', impact: 'Unproven effectiveness', connects: ['climate', 'innovation'] },
+          { text: 'Expand LNG exports', cost: 'Infrastructure', impact: 'Energy security for allies', connects: ['trade', 'geopolitics'] }
+        ]
+      },
+      'Immigration': {
+        icon: '🌍',
+        policies: [
+          { text: 'Reduce to 200-250k/year', cost: 'Admin change', impact: 'Labor shortage concerns', connects: ['economy', 'demographics'] },
+          { text: 'Reinstate Mexico visa requirements', cost: 'Diplomatic cost', impact: 'Reduced asylum claims', connects: ['security', 'diplomacy'] },
+          { text: 'Enhanced border screening', cost: '$500M+', impact: 'Slower processing', connects: ['security'] },
+          { text: 'Merit-based selection priority', cost: 'System redesign', impact: 'Skills-focused immigration', connects: ['workforce'] }
+        ]
+      },
+      'Governance': {
+        icon: '⚖️',
+        policies: [
+          { text: 'Defund CBC (keep Radio-Canada)', cost: '$1.2B savings', impact: 'English media gap', connects: ['media', 'culture'] },
+          { text: 'Audit Bank of Canada', cost: 'Oversight costs', impact: 'Political interference concerns', connects: ['finance'] },
+          { text: 'Free speech on campuses', cost: 'Funding leverage', impact: 'Academic autonomy issues', connects: ['education', 'rights'] },
+          { text: 'Ban foreign funding of advocacy groups', cost: 'Regulatory', impact: 'Transparency vs civil society', connects: ['foreign-influence'] }
+        ]
+      }
+    }
+  },
+  carney: {
+    id: 'carney',
+    name: 'Mark Carney',
+    party: 'Liberal',
+    position: 'Prime Minister',
+    color: '#dc2626',
+    photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
+    tagline: 'Build Canada Strong, Unite Against Tariffs',
+    bio: 'Former Bank of Canada & Bank of England Governor. PM since March 2025. Economic expert leading response to Trump.',
+    categories: ['Trade & Unity', 'Housing', 'Defence', 'Climate', 'Skills'],
+    priorities: {
+      'Trade & Unity': {
+        icon: '🤝',
+        policies: [
+          { text: 'One Canadian economy - remove interprovincial barriers', cost: 'Regulatory reform', impact: '$200B growth potential', connects: ['economy', 'provinces'] },
+          { text: 'Middle class tax cut', cost: '$12B over 4yr', impact: '$650/year for median family', connects: ['affordability'] },
+          { text: 'Fight Trump tariffs aggressively', cost: 'Diplomatic capital', impact: 'Economic defense crucial', connects: ['trade', 'sovereignty'] },
+          { text: 'National economic security strategy', cost: '$5B planning', impact: 'Coordinate response to threats', connects: ['security', 'resilience'] }
+        ]
+      },
+      'Housing': {
+        icon: '🏗️',
+        policies: [
+          { text: 'Build 500k homes/year by 2035', cost: '$11.8B+ over 4yr', impact: 'Major supply increase', connects: ['construction', 'affordability'] },
+          { text: 'Reduce municipal development charges', cost: '$6B infrastructure support', impact: 'Lower new home costs', connects: ['municipal', 'developers'] },
+          { text: 'Create Build Canada Homes agency', cost: 'Gov expansion', impact: 'Centralized coordination', connects: ['bureaucracy', 'delivery'] },
+          { text: 'Foreign buyer ban extended 2 years', cost: 'Market restriction', impact: 'Debated effectiveness', connects: ['foreign-ownership'] }
+        ]
+      },
+      'Defence': {
+        icon: '🛡️',
+        policies: [
+          { text: '$18B defence spending increase to 2030', cost: '$18B over 4yr', impact: 'Meet NATO commitments', connects: ['security', 'jobs', 'alliances'] },
+          { text: 'Strengthen border security vs US', cost: '$2B border tech', impact: 'Respond to Trump threats', connects: ['sovereignty', 'technology'] },
+          { text: 'Full foreign policy review', cost: 'Diplomatic expansion', impact: 'Reduce US dependence', connects: ['global', 'strategy'] },
+          { text: 'Arctic sovereignty investments', cost: '$3B infrastructure', impact: 'Counter Russian presence', connects: ['geopolitics', 'north'] }
+        ]
+      },
+      'Climate': {
+        icon: '🌱',
+        policies: [
+          { text: 'Investment tax credits for clean tech', cost: '$30B+ over 10yr', impact: 'Attract green industry', connects: ['industry', 'innovation', 'jobs'] },
+          { text: 'Critical minerals supply chain', cost: '$5B investment', impact: 'Strategic resource control', connects: ['resources', 'tech'] },
+          { text: 'Carbon removal targets 2035/2040', cost: 'Industry transformation', impact: 'Long-term emissions cuts', connects: ['climate', 'technology'] },
+          { text: 'Clean electricity grid expansion', cost: '$40B+ infrastructure', impact: 'Interprovincial energy trade', connects: ['energy', 'provinces'] }
+        ]
+      },
+      'Skills': {
+        icon: '🎓',
+        policies: [
+          { text: 'Cover $8k apprenticeship costs', cost: '$2B over 4yr', impact: 'Trades workforce boost', connects: ['trades', 'workforce'] },
+          { text: 'Labour mobility across provinces', cost: 'Regulatory change', impact: 'Easier job transitions', connects: ['economy', 'workers'] },
+          { text: 'Maintain dental/pharmacare', cost: '$13B annually', impact: 'Universal healthcare expansion', connects: ['healthcare', 'social'] },
+          { text: 'AI skills training fund', cost: '$1B', impact: 'Tech workforce development', connects: ['technology', 'future'] }
+        ]
+      }
+    }
+  },
+  singh: {
+    id: 'singh',
+    name: 'Jagmeet Singh',
+    party: 'NDP',
+    position: 'Former NDP Leader',
+    color: '#ea580c',
+    photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
+    tagline: 'Tax the Rich, Help Regular People',
+    bio: 'NDP Leader since 2017. First Sikh federal party leader. Social justice and workers rights advocate.',
+    categories: ['Wealth Tax', 'Healthcare', 'Housing', 'Workers', 'Climate'],
+    priorities: {
+      'Wealth Tax': {
+        icon: '💎',
+        policies: [
+          { text: '1-3% wealth tax on $10M-$100M+', cost: 'N/A', impact: '$15B revenue from ultra-rich', connects: ['redistribution', 'inequality'] },
+          { text: '2% surtax on corps earning $500M+', cost: 'N/A', impact: '$8B revenue from big business', connects: ['corporate', 'revenue'] },
+          { text: 'Close tax loopholes for ultra-rich', cost: 'N/A', impact: '$5B additional revenue', connects: ['fairness', 'tax-avoidance'] },
+          { text: 'Windfall tax on excess corporate profits', cost: 'N/A', impact: 'Target pandemic profiteers', connects: ['fairness', 'inflation'] }
+        ]
+      },
+      'Healthcare': {
+        icon: '🏥',
+        policies: [
+          { text: 'Guarantee family doctor access', cost: '$10B over 4yr', impact: 'End doctor shortage', connects: ['primary-care', 'provinces'] },
+          { text: 'Expand dental care nationally', cost: '$5B annually', impact: 'Full universal coverage', connects: ['health', 'affordability'] },
+          { text: 'Full pharmacare implementation', cost: '$15B annually', impact: 'Free prescriptions for all', connects: ['health', 'seniors'] },
+          { text: 'Mental health care coverage', cost: '$3B annually', impact: 'Public system expansion', connects: ['health', 'wellbeing'] }
+        ]
+      },
+      'Housing': {
+        icon: '🔑',
+        policies: [
+          { text: 'Build 500k rent-controlled units', cost: '$20B over 10yr', impact: 'Affordable rental supply', connects: ['affordability', 'renters'] },
+          { text: 'Ban renovictions nationally', cost: 'Regulatory', impact: 'Tenant protection', connects: ['tenant-rights', 'displacement'] },
+          { text: 'Tie federal funding to rent controls', cost: 'Policy leverage', impact: 'Force provincial action', connects: ['provinces', 'affordability'] },
+          { text: '20% foreign buyer tax', cost: 'Market restriction', impact: 'Discourage speculation', connects: ['speculation', 'affordability'] }
+        ]
+      },
+      'Workers': {
+        icon: '👷',
+        policies: [
+          { text: 'Combat job loss from automation', cost: '$3B training', impact: 'Transition support programs', connects: ['jobs', 'technology', 'retraining'] },
+          { text: 'Increase federal minimum wage to $20', cost: '$2B impact', impact: 'Federal sector raise', connects: ['labour', 'affordability'] },
+          { text: 'Strong anti-scab legislation', cost: 'Labour gains', impact: 'Union bargaining power', connects: ['unions', 'strikes'] },
+          { text: '10 days paid sick leave federal', cost: '$500M', impact: 'Worker protections', connects: ['health', 'labour'] }
+        ]
+      },
+      'Climate': {
+        icon: '♻️',
+        policies: [
+          { text: 'Just transition for oil workers', cost: '$8B over 10yr', impact: 'Retrain fossil fuel workers', connects: ['energy', 'jobs', 'transition'] },
+          { text: '30% emissions reduction by 2025', cost: 'Regulatory', impact: 'Aggressive climate targets', connects: ['climate', 'industry'] },
+          { text: 'Renewable energy super grid', cost: '$50B infrastructure', impact: 'Pan-Canadian clean power', connects: ['energy', 'infrastructure'] },
+          { text: 'End fossil fuel subsidies', cost: '$2B saved', impact: 'Redirect to renewables', connects: ['climate', 'fiscal'] }
+        ]
+      }
+    }
+  },
+  blanchet: {
+    id: 'blanchet',
+    name: 'Yves-François Blanchet',
+    party: 'Bloc Québécois',
+    position: 'Bloc Leader',
+    color: '#4a9eff',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+    tagline: 'Defend Quebec, Hold the Balance of Power',
+    bio: 'Bloc Leader since 2019. Former PQ environment minister. Focuses on Quebec sovereignty and interests.',
+    categories: ['Quebec Identity', 'Economy', 'Environment', 'Culture', 'Seniors'],
+    priorities: {
+      'Quebec Identity': {
+        icon: '⚜️',
+        policies: [
+          { text: 'Protect French language federally', cost: 'Enforcement', impact: 'Strengthen Bill 96 alignment', connects: ['language', 'identity'] },
+          { text: 'Quebec control over immigration', cost: 'Jurisdictional', impact: 'Provincial autonomy', connects: ['immigration', 'integration'] },
+          { text: 'Enforce secularism (Bill 21 support)', cost: 'Legal battles', impact: 'Religious symbol restrictions', connects: ['laicity', 'values'] },
+          { text: 'Quebec sovereignty advocacy', cost: 'Political capital', impact: 'Long-term independence goal', connects: ['separatism', 'nation'] }
+        ]
+      },
+      'Economy': {
+        icon: '🏭',
+        policies: [
+          { text: 'Protect supply management (dairy/poultry)', cost: 'Trade leverage', impact: 'Shield Quebec farmers from Trump', connects: ['agriculture', 'trade'] },
+          { text: 'Aerospace sector support', cost: '$2B investment', impact: 'Quebec jobs in Bombardier/CAE', connects: ['industry', 'manufacturing'] },
+          { text: 'Process resources in Quebec', cost: 'Infrastructure', impact: 'Value-added vs raw exports', connects: ['resources', 'jobs'] },
+          { text: 'Parliamentary vote on trade deals', cost: 'Process reform', impact: 'Prevent culture/supply management compromise', connects: ['democracy', 'sovereignty'] }
+        ]
+      },
+      'Environment': {
+        icon: '🌊',
+        policies: [
+          { text: 'Climate adaptation infrastructure fund', cost: '$10B over 10yr', impact: 'Flood/weather resilience', connects: ['climate', 'infrastructure'] },
+          { text: 'Transition from fossil fuels', cost: 'Economic shift', impact: 'Support Quebec clean energy', connects: ['energy', 'climate'] },
+          { text: 'Protect waterways and forests', cost: '$1B conservation', impact: 'Natural resource stewardship', connects: ['environment', 'heritage'] },
+          { text: 'Indigenous environmental partnerships', cost: 'Co-management', impact: 'Reconciliation through conservation', connects: ['indigenous', 'land'] }
+        ]
+      },
+      'Culture': {
+        icon: '🎭',
+        policies: [
+          { text: 'Increase funding for Quebec culture', cost: '$500M annually', impact: 'Films, music, arts support', connects: ['identity', 'arts'] },
+          { text: 'Protect Quebec content quotas', cost: 'Regulatory', impact: 'Streaming service requirements', connects: ['media', 'sovereignty'] },
+          { text: 'Support for regional journalism', cost: '$100M', impact: 'French media sustainability', connects: ['media', 'democracy'] },
+          { text: 'Francophone content in federal institutions', cost: 'Implementation', impact: 'Cultural representation', connects: ['language', 'visibility'] }
+        ]
+      },
+      'Seniors': {
+        icon: '👵',
+        policies: [
+          { text: 'OAS increase for 65-74 year olds', cost: '$3B annually', impact: 'Parity with 75+ benefits', connects: ['pensions', 'equity'] },
+          { text: 'Increase health transfers', cost: '$6B annually', impact: 'Province healthcare funding', connects: ['healthcare', 'federal-provincial'] },
+          { text: 'Long-term care standards', cost: '$2B infrastructure', impact: 'Federal support for CHSLD', connects: ['seniors', 'care'] },
+          { text: 'Pension income splitting expansion', cost: '$400M revenue loss', impact: 'Tax relief for couples', connects: ['tax', 'retirement'] }
+        ]
+      }
+    }
+  },
+  may: {
+    id: 'may',
+    name: 'Elizabeth May',
+    party: 'Green',
+    position: 'Green Party Leader',
+    color: '#16a34a',
+    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    tagline: 'Climate Action, Social Justice, Democratic Reform',
+    bio: 'MP since 2011. Environmental lawyer and activist. Green Leader 2006-2019, 2022-present. Officer of the Order of Canada.',
+    categories: ['Climate', 'Housing', 'Defence', 'Healthcare', 'Democracy'],
+    priorities: {
+      'Climate': {
+        icon: '🌍',
+        policies: [
+          { text: 'Net-zero by 2030 (vs 2050)', cost: 'Massive transition', impact: 'Most aggressive climate target', connects: ['emissions', 'urgency'] },
+          { text: 'Stop all new fossil fuel projects', cost: 'Industry opposition', impact: 'No new pipelines, LNG, oil sands', connects: ['oil-gas', 'economy'] },
+          { text: '100% clean energy grid by 2035', cost: '$80B infrastructure', impact: 'Interconnected renewable power', connects: ['energy', 'grid'] },
+          { text: 'Rapid transit expansion nationally', cost: '$50B over 15yr', impact: 'Reduce car dependence', connects: ['transportation', 'urban'] }
+        ]
+      },
+      'Housing': {
+        icon: '🏘️',
+        policies: [
+          { text: 'Ban corporate ownership of single-family homes', cost: 'Market restriction', impact: 'Homes for people not profits', connects: ['speculation', 'affordability'] },
+          { text: 'Close real estate money laundering loopholes', cost: 'Enforcement', impact: 'Transparency in property', connects: ['crime', 'affordability'] },
+          { text: 'End REIT tax advantages', cost: '$1B revenue', impact: 'Level playing field for ownership', connects: ['tax', 'financialization'] },
+          { text: 'Permanent affordability covenants', cost: 'Regulatory', impact: 'Public-funded housing stays affordable', connects: ['social-housing', 'long-term'] }
+        ]
+      },
+      'Defence': {
+        icon: '🕊️',
+        policies: [
+          { text: 'Create Economic NATO against Trump', cost: 'Diplomatic effort', impact: 'Democratic alliance coordination', connects: ['trade', 'sovereignty', 'alliances'] },
+          { text: 'National Civil Defence Corps', cost: '$2B annually', impact: 'Disaster response capacity', connects: ['resilience', 'climate-adaptation'] },
+          { text: 'Arctic sovereignty patrols increase', cost: '$1.5B equipment', impact: 'Counter Russia in North', connects: ['security', 'arctic'] },
+          { text: 'Ban Canadian weapons to human rights violators', cost: 'Export loss', impact: 'Ethical foreign policy', connects: ['arms', 'values'] }
+        ]
+      },
+      'Healthcare': {
+        icon: '💊',
+        policies: [
+          { text: 'Universal mental healthcare', cost: '$8B annually', impact: 'Public coverage for therapy', connects: ['health', 'wellbeing'] },
+          { text: 'Expand pharmacare to all drugs', cost: '$18B annually', impact: 'Most comprehensive drug coverage', connects: ['health', 'affordability'] },
+          { text: 'Guaranteed primary care access', cost: '$12B over 4yr', impact: 'Every Canadian gets family doctor', connects: ['health', 'access'] },
+          { text: 'Long-term care national standards', cost: '$5B annually', impact: 'Federal oversight of seniors care', connects: ['seniors', 'quality'] }
+        ]
+      },
+      'Democracy': {
+        icon: '🗳️',
+        policies: [
+          { text: 'Proportional representation', cost: 'Electoral reform', impact: 'Every vote counts equally', connects: ['voting', 'fairness'] },
+          { text: 'Senate abolition or election', cost: 'Constitutional', impact: 'End appointed upper house', connects: ['institutions', 'accountability'] },
+          { text: 'Citizens assemblies on major issues', cost: '$50M annually', impact: 'Direct democracy mechanisms', connects: ['participation', 'deliberation'] },
+          { text: 'Ban corporate/union donations', cost: 'Regulatory', impact: 'Remove money from politics', connects: ['lobbying', 'influence'] }
+        ]
+      }
+    }
+  },
+  freeland: {
+    id: 'freeland',
+    name: 'Chrystia Freeland',
+    party: 'Liberal',
+    position: 'Former Deputy PM',
+    color: '#dc2626',
+    photo: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    tagline: 'Economic Security, Democratic Resilience',
+    bio: 'Finance Minister 2020-2024. Deputy PM 2019-2024. Resigned over fiscal disagreements. Ran for Liberal leadership 2025.',
+    categories: ['Finance', 'Trade', 'Democracy', 'Social Policy', 'Foreign Affairs'],
+    priorities: {
+      'Finance': {
+        icon: '📊',
+        policies: [
+          { text: 'Fiscal prudence with social investment', cost: 'Balanced approach', impact: 'Avoid deficits while funding priorities', connects: ['economy', 'responsibility'] },
+          { text: 'Target inflation through BOC independence', cost: 'Monetary policy', impact: 'Respect central bank autonomy', connects: ['inflation', 'governance'] },
+          { text: 'Progressive tax system strengthening', cost: '$5B revenue', impact: 'Ensure wealthy pay fair share', connects: ['fairness', 'redistribution'] },
+          { text: 'Economic resilience fund', cost: '$10B reserve', impact: 'Buffer for global shocks', connects: ['stability', 'preparedness'] }
+        ]
+      },
+      'Trade': {
+        icon: '🌐',
+        policies: [
+          { text: 'Diversify away from US dependence', cost: 'Diplomatic effort', impact: 'Build trade with Europe, Asia', connects: ['sovereignty', 'economy'] },
+          { text: 'CUSMA renegotiation strategy', cost: 'Legal resources', impact: 'Protect supply management, culture', connects: ['agriculture', 'identity'] },
+          { text: 'Critical supply chain security', cost: '$8B investment', impact: 'Domestic production capacity', connects: ['resilience', 'manufacturing'] },
+          { text: 'Trade corridor infrastructure', cost: '$15B over 10yr', impact: 'Efficient goods movement', connects: ['logistics', 'competitiveness'] }
+        ]
+      },
+      'Democracy': {
+        icon: '🛡️',
+        policies: [
+          { text: 'Foreign interference crackdown', cost: '$500M security', impact: 'Protect elections from China/Russia', connects: ['security', 'sovereignty'] },
+          { text: 'Media literacy education', cost: '$200M annually', impact: 'Combat disinformation', connects: ['education', 'democracy'] },
+          { text: 'Democratic coalition building globally', cost: 'Diplomatic capital', impact: 'Alliance against authoritarianism', connects: ['alliances', 'values'] },
+          { text: 'Electoral security enhancements', cost: '$100M technology', impact: 'Protect voting infrastructure', connects: ['security', 'integrity'] }
+        ]
+      },
+      'Social Policy': {
+        icon: '👨‍👩‍👧',
+        policies: [
+          { text: 'National childcare completion', cost: '$13B annually', impact: '$10/day universal access', connects: ['families', 'equality'] },
+          { text: 'Gender equity budgeting', cost: 'Framework change', impact: 'Analyze all spending through gender lens', connects: ['equality', 'transparency'] },
+          { text: 'Disability benefit enhancement', cost: '$2B annually', impact: 'Adequate income support', connects: ['disability', 'dignity'] },
+          { text: 'Early learning indigenous programs', cost: '$800M', impact: 'Culturally appropriate childcare', connects: ['indigenous', 'education'] }
+        ]
+      },
+      'Foreign Affairs': {
+        icon: '🗺️',
+        policies: [
+          { text: 'Ukraine military support continuation', cost: '$5B over 3yr', impact: 'Long-term commitment against Russia', connects: ['security', 'democracy'] },
+          { text: 'Indo-Pacific strategy implementation', cost: '$3B investment', impact: 'Counterbalance China influence', connects: ['geopolitics', 'trade'] },
+          { text: 'Arctic sovereignty assertion', cost: '$4B infrastructure', impact: 'Presence vs Russian expansion', connects: ['security', 'north'] },
+          { text: 'Strengthen Five Eyes intelligence', cost: '$500M systems', impact: 'Coordinate with allies', connects: ['security', 'intelligence'] }
+        ]
+      }
+    }
+  },
+  champagne: {
+    id: 'champagne',
+    name: 'François-Philippe Champagne',
+    party: 'Liberal',
+    position: 'Innovation Minister',
+    color: '#dc2626',
+    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    tagline: 'Innovation Economy, Strategic Industries',
+    bio: 'MP since 2015. Former Foreign Affairs, Infrastructure, Innovation Minister. Business background, focused on economic development.',
+    categories: ['Innovation', 'Industry', 'Infrastructure', 'Competition', 'Resources'],
+    priorities: {
+      'Innovation': {
+        icon: '🚀',
+        policies: [
+          { text: 'AI supercluster expansion', cost: '$5B over 5yr', impact: 'World-leading AI sector', connects: ['technology', 'research', 'jobs'] },
+          { text: 'R&D tax credit enhancement', cost: '$3B annually', impact: 'Incentivize business innovation', connects: ['science', 'business'] },
+          { text: 'Quantum computing national strategy', cost: '$1B investment', impact: 'Next-gen computing leadership', connects: ['technology', 'security'] },
+          { text: 'Clean tech commercialization fund', cost: '$2B', impact: 'Scale up green innovations', connects: ['climate', 'business'] }
+        ]
+      },
+      'Industry': {
+        icon: '🏭',
+        policies: [
+          { text: 'EV battery manufacturing incentives', cost: '$15B over 10yr', impact: 'Attract major factories', connects: ['manufacturing', 'climate', 'jobs'] },
+          { text: 'Steel and aluminum modernization', cost: '$4B', impact: 'Compete with subsidized imports', connects: ['manufacturing', 'trade'] },
+          { text: 'Pharmaceutical domestic capacity', cost: '$2B investment', impact: 'Drug security independence', connects: ['health', 'supply-chains'] },
+          { text: 'Advanced manufacturing automation', cost: '$1B incentives', impact: 'Productivity enhancement', connects: ['technology', 'competitiveness'] }
+        ]
+      },
+      'Infrastructure': {
+        icon: '🛤️',
+        policies: [
+          { text: 'High-speed rail corridors', cost: '$40B over 15yr', impact: 'Connect major cities', connects: ['transportation', 'climate'] },
+          { text: 'Rural broadband completion', cost: '$2B', impact: 'Universal high-speed internet', connects: ['connectivity', 'rural'] },
+          { text: 'Smart grid infrastructure', cost: '$10B', impact: 'Efficient energy distribution', connects: ['energy', 'technology'] },
+          { text: 'Port and airport modernization', cost: '$8B', impact: 'Trade gateway capacity', connects: ['trade', 'logistics'] }
+        ]
+      },
+      'Competition': {
+        icon: '⚖️',
+        policies: [
+          { text: 'Break up telecom oligopolies', cost: 'Regulatory', impact: 'Lower cell/internet prices', connects: ['affordability', 'consumers'] },
+          { text: 'Grocery code of conduct enforcement', cost: '$100M oversight', impact: 'Fair supplier treatment', connects: ['food', 'business'] },
+          { text: 'Open banking framework', cost: '$500M', impact: 'Fintech competition', connects: ['finance', 'innovation'] },
+          { text: 'Digital platform regulation', cost: 'Regulatory', impact: 'Curb tech giant dominance', connects: ['technology', 'fairness'] }
+        ]
+      },
+      'Resources': {
+        icon: '⛏️',
+        policies: [
+          { text: 'Critical minerals strategy', cost: '$5B investment', impact: 'Secure EV battery materials', connects: ['mining', 'climate', 'geopolitics'] },
+          { text: 'Forestry innovation fund', cost: '$1B', impact: 'High-value wood products', connects: ['resources', 'environment'] },
+          { text: 'Rare earth processing capacity', cost: '$2B', impact: 'Reduce China dependence', connects: ['security', 'supply-chains'] },
+          { text: 'Sustainable mining standards', cost: '$500M', impact: 'Environmental leadership', connects: ['environment', 'industry'] }
+        ]
+      }
+    }
+  },
+  leslyn_lewis: {
+    id: 'leslyn_lewis',
+    name: 'Leslyn Lewis',
+    party: 'Conservative',
+    position: 'Conservative MP',
+    color: '#1e40af',
+    photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop',
+    tagline: 'Social Conservatism, Freedom, Fiscal Responsibility',
+    bio: 'MP since 2019. Lawyer, ran for CPC leadership twice. Known for social conservative values and populist appeal.',
+    categories: ['Family Values', 'Freedom', 'Economy', 'Immigration', 'Healthcare'],
+    priorities: {
+      'Family Values': {
+        icon: '👨‍👩‍👧‍👦',
+        policies: [
+          { text: 'Parental rights in education', cost: 'Provincial coordination', impact: 'Control over curriculum content', connects: ['education', 'children'] },
+          { text: 'Conscience rights for healthcare workers', cost: 'Legal framework', impact: 'Allow refusal of procedures', connects: ['healthcare', 'religion'] },
+          { text: 'Pro-life advocacy', cost: 'Political capital', impact: 'Restrict abortion access', connects: ['rights', 'religion'] },
+          { text: 'Traditional family support programs', cost: '$2B tax credits', impact: 'Incentivize stay-at-home parents', connects: ['family', 'tax'] }
+        ]
+      },
+      'Freedom': {
+        icon: '🗽',
+        policies: [
+          { text: 'End vaccine mandates permanently', cost: 'Policy reversal', impact: 'Individual choice over public health', connects: ['health', 'rights'] },
+          { text: 'Repeal censorship bills (C-11, C-18)', cost: 'Regulatory rollback', impact: 'Unrestricted online content', connects: ['media', 'speech'] },
+          { text: 'Property rights constitutional amendment', cost: 'Constitutional', impact: 'Protect from government seizure', connects: ['rights', 'constitution'] },
+          { text: 'End digital ID tracking', cost: 'Privacy protection', impact: 'Limit government surveillance', connects: ['privacy', 'technology'] }
+        ]
+      },
+      'Economy': {
+        icon: '💼',
+        policies: [
+          { text: 'Small business tax relief', cost: '$3B', impact: 'Reduce regulatory burden', connects: ['business', 'growth'] },
+          { text: 'Energy sector deregulation', cost: 'Regulatory reform', impact: 'Boost oil and gas', connects: ['energy', 'jobs'] },
+          { text: 'Balanced budget amendment', cost: 'Constitutional', impact: 'Force spending discipline', connects: ['fiscal', 'governance'] },
+          { text: 'Eliminate capital gains tax increases', cost: '$2B revenue loss', impact: 'Protect investors', connects: ['tax', 'investment'] }
+        ]
+      },
+      'Immigration': {
+        icon: '🛂',
+        policies: [
+          { text: 'Values test for newcomers', cost: 'Admin costs', impact: 'Cultural assimilation requirement', connects: ['integration', 'identity'] },
+          { text: 'Prioritize Christian refugees', cost: 'Selection criteria', impact: 'Religious preference policy', connects: ['religion', 'refugees'] },
+          { text: 'Reduce to 150k/year', cost: 'Admin change', impact: 'Stricter than Poilievre', connects: ['population', 'services'] },
+          { text: 'End birthright citizenship', cost: 'Constitutional change', impact: 'Children of non-citizens ineligible', connects: ['citizenship', 'sovereignty'] }
+        ]
+      },
+      'Healthcare': {
+        icon: '💉',
+        policies: [
+          { text: 'Private healthcare options expansion', cost: 'Provincial coordination', impact: 'Two-tier system growth', connects: ['healthcare', 'privatization'] },
+          { text: 'Natural health products deregulation', cost: 'Safety oversight reduction', impact: 'Alternative medicine access', connects: ['health', 'freedom'] },
+          { text: 'End mandatory vaccinations for children', cost: 'Policy change', impact: 'Parental choice over public health', connects: ['children', 'freedom'] },
+          { text: 'Faith-based healthcare facilities funding', cost: '$500M', impact: 'Support religious hospitals', connects: ['religion', 'healthcare'] }
+        ]
+      }
+    }
+  },
+  joly: {
+    id: 'joly',
+    name: 'Mélanie Joly',
+    party: 'Liberal',
+    position: 'Foreign Affairs Minister',
+    color: '#dc2626',
+    photo: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop',
+    tagline: 'Feminist Foreign Policy, Multilateralism',
+    bio: 'MP since 2015. Foreign Affairs Minister since 2021. Former Heritage Minister. Focus on diplomacy and international law.',
+    categories: ['Diplomacy', 'Security', 'Human Rights', 'Trade', 'Arctic'],
+    priorities: {
+      'Diplomacy': {
+        icon: '🤝',
+        policies: [
+          { text: 'Feminist foreign policy framework', cost: '$100M annually', impact: 'Gender equality in all diplomatic work', connects: ['equality', 'development'] },
+          { text: 'Strengthen UN multilateralism', cost: 'Diplomatic capital', impact: 'Support rules-based order', connects: ['international', 'law'] },
+          { text: 'Latin America engagement strategy', cost: '$2B over 5yr', impact: 'Counter China influence', connects: ['geopolitics', 'development'] },
+          { text: 'Indo-Pacific diplomatic presence', cost: '$1B expansion', impact: 'More embassies, staff in Asia', connects: ['geopolitics', 'trade'] }
+        ]
+      },
+      'Security': {
+        icon: '🔒',
+        policies: [
+          { text: 'Cyberwarfare defence capacity', cost: '$3B over 5yr', impact: 'Protect critical infrastructure', connects: ['technology', 'security'] },
+          { text: 'Intelligence sharing expansion', cost: '$500M systems', impact: 'Coordinate with Five Eyes+', connects: ['security', 'alliances'] },
+          { text: 'Sanctions enforcement unit', cost: '$200M annually', impact: 'Target Russia, Iran, China violations', connects: ['enforcement', 'accountability'] },
+          { text: 'Foreign agent registry', cost: '$100M', impact: 'Track foreign influence operations', connects: ['transparency', 'sovereignty'] }
+        ]
+      },
+      'Human Rights': {
+        icon: '🕊️',
+        policies: [
+          { text: 'Magnitsky sanctions expansion', cost: 'Diplomatic cost', impact: 'Target human rights abusers globally', connects: ['accountability', 'justice'] },
+          { text: 'LGBTQ+ rights advocacy globally', cost: '$50M programs', impact: 'Support persecuted communities', connects: ['rights', 'equality'] },
+          { text: 'Press freedom protection fund', cost: '$100M', impact: 'Support journalists at risk', connects: ['media', 'democracy'] },
+          { text: 'Uyghur genocide recognition action', cost: 'China relations cost', impact: 'Beyond symbolic declaration', connects: ['human-rights', 'accountability'] }
+        ]
+      },
+      'Trade': {
+        icon: '🌍',
+        policies: [
+          { text: 'CPTPP expansion advocacy', cost: 'Negotiation resources', impact: 'Grow Pacific trade bloc', connects: ['trade', 'geopolitics'] },
+          { text: 'Africa trade corridors', cost: '$3B infrastructure', impact: 'Access emerging markets', connects: ['development', 'trade'] },
+          { text: 'Supply chain resilience partnerships', cost: '$5B investment', impact: 'Reduce China dependence', connects: ['security', 'economy'] },
+          { text: 'Green trade agreements', cost: 'Negotiation framework', impact: 'Link trade to climate action', connects: ['trade', 'climate'] }
+        ]
+      },
+      'Arctic': {
+        icon: '🧊',
+        policies: [
+          { text: 'Arctic Council leadership', cost: '$500M programs', impact: 'Indigenous-led governance', connects: ['indigenous', 'sovereignty'] },
+          { text: 'Northwest Passage sovereignty', cost: '$2B naval presence', impact: 'Assert Canadian control', connects: ['security', 'shipping'] },
+          { text: 'Circumpolar Indigenous relations', cost: '$200M partnerships', impact: 'Coordinate with Sami, Inuit globally', connects: ['indigenous', 'culture'] },
+          { text: 'Arctic research infrastructure', cost: '$1B stations', impact: 'Scientific presence in North', connects: ['research', 'climate'] }
+        ]
+      }
+    }
+  },
+  guilbeault: {
+    id: 'guilbeault',
+    name: 'Steven Guilbeault',
+    party: 'Liberal',
+    position: 'Environment Minister',
+    color: '#dc2626',
+    photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
+    tagline: 'Climate Leadership, Emissions Caps, Clean Energy',
+    bio: 'MP since 2019. Former Greenpeace activist. Environment Minister since 2021. Pushes aggressive climate policy.',
+    categories: ['Emissions', 'Clean Energy', 'Nature', 'Climate Finance', 'Adaptation'],
+    priorities: {
+      'Emissions': {
+        icon: '📉',
+        policies: [
+          { text: 'Oil and gas emissions cap', cost: 'Industry opposition', impact: 'Force sector reductions', connects: ['climate', 'energy'] },
+          { text: 'Methane reduction regulations', cost: '$1B compliance', impact: '75% cut by 2030', connects: ['emissions', 'oil-gas'] },
+          { text: 'Clean electricity standard', cost: 'Grid transformation', impact: 'Net-zero power by 2035', connects: ['energy', 'provinces'] },
+          { text: 'Carbon border adjustment', cost: 'Trade complexity', impact: 'Tariff on high-carbon imports', connects: ['trade', 'competitiveness'] }
+        ]
+      },
+      'Clean Energy': {
+        icon: '🌞',
+        policies: [
+          { text: 'Renewable energy zone incentives', cost: '$20B over 10yr', impact: 'Wind, solar mega-projects', connects: ['energy', 'jobs'] },
+          { text: 'SMR nuclear support', cost: '$3B R&D', impact: 'Small modular reactors', connects: ['energy', 'innovation'] },
+          { text: 'Hydrogen strategy implementation', cost: '$8B investment', impact: 'Green hydrogen export capacity', connects: ['energy', 'trade'] },
+          { text: 'EV charging network completion', cost: '$2B infrastructure', impact: 'Coast-to-coast fast charging', connects: ['transportation', 'climate'] }
+        ]
+      },
+      'Nature': {
+        icon: '🌲',
+        policies: [
+          { text: '30% land and ocean protection by 2030', cost: '$5B over 5yr', impact: 'Expand protected areas', connects: ['biodiversity', 'conservation'] },
+          { text: 'Old-growth forest protection', cost: 'Industry restrictions', impact: 'Ban logging in key areas', connects: ['forestry', 'climate'] },
+          { text: 'Species at risk recovery', cost: '$1B programs', impact: 'Prevent extinctions', connects: ['biodiversity', 'ecosystems'] },
+          { text: 'Urban green space funding', cost: '$500M', impact: 'Climate resilience in cities', connects: ['urban', 'adaptation'] }
+        ]
+      },
+      'Climate Finance': {
+        icon: '💰',
+        policies: [
+          { text: 'International climate finance $5.3B', cost: '$5.3B over 5yr', impact: 'Help developing nations adapt', connects: ['development', 'global'] },
+          { text: 'Green bond program expansion', cost: '$10B issuance', impact: 'Finance climate projects', connects: ['finance', 'investment'] },
+          { text: 'Climate risk disclosure mandatory', cost: 'Regulatory', impact: 'Corporate transparency', connects: ['business', 'accountability'] },
+          { text: 'Fossil fuel subsidy phase-out', cost: '$2B saved', impact: 'End taxpayer support for oil/gas', connects: ['fiscal', 'climate'] }
+        ]
+      },
+      'Adaptation': {
+        icon: '🌊',
+        policies: [
+          { text: 'Flood mapping and infrastructure', cost: '$3B over 5yr', impact: 'Protect communities from disasters', connects: ['infrastructure', 'resilience'] },
+          { text: 'Wildfire prevention strategy', cost: '$2B programs', impact: 'Prescribed burns, fire breaks', connects: ['forests', 'safety'] },
+          { text: 'Climate-resilient agriculture', cost: '$1B support', impact: 'Adapt farming to changing conditions', connects: ['agriculture', 'food-security'] },
+          { text: 'Coastal protection projects', cost: '$4B infrastructure', impact: 'Sea level rise defenses', connects: ['infrastructure', 'coastal'] }
+        ]
+      }
+    }
+  }
+};
+
+function CategoryTabs({ categories, activeCategory, onSelect, color }) {
+  const scrollRef = useRef(null);
+  
+  return (
+    <div className="relative">
+      <div 
+        ref={scrollRef}
+        className="flex overflow-x-auto gap-2 pb-3 scrollbar-hide snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {categories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => onSelect(cat)}
+            className={`snap-start flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              activeCategory === cat
+                ? 'text-white shadow-lg'
+                : 'bg-white text-slate-700 hover:bg-slate-100'
+            }`}
+            style={activeCategory === cat ? { backgroundColor: color } : {}}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function OverviewView({ onSelect }) {
+  const [filter, setFilter] = useState('all');
+  const parties = ['all', 'Conservative', 'Liberal', 'NDP', 'Bloc Québécois', 'Green'];
+  
+  const filtered = filter === 'all' 
+    ? Object.values(politicianData)
+    : Object.values(politicianData).filter(p => p.party === filter);
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center mb-6">
+        <h2 className="text-3xl font-bold text-slate-900 mb-2">
+          Canadian Political Landscape 2025
+        </h2>
+        <p className="text-slate-600">
+          10 Leaders • 50 Policy Categories • 200+ Specific Policies
+        </p>
+      </div>
+
+      {/* Party Filter Tabs */}
+      <div className="flex overflow-x-auto gap-2 pb-3">
+        {parties.map(party => (
+          <button
+            key={party}
+            onClick={() => setFilter(party)}
+            className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              filter === party
+                ? 'bg-slate-900 text-white'
+                : 'bg-white text-slate-700 hover:bg-slate-100'
+            }`}
+          >
+            {party === 'all' ? 'All Parties' : party}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map((pol) => (
+          <div 
+            key={pol.id}
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden"
+            onClick={() => onSelect(pol.id)}
+          >
+            <div className="relative h-40">
+              <img 
+                src={pol.photo} 
+                alt={pol.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+              <div className="absolute bottom-2 left-2 right-2">
+                <div 
+                  className="inline-block px-2 py-1 rounded-full text-white text-xs font-semibold mb-1"
+                  style={{ backgroundColor: pol.color }}
+                >
+                  {pol.party}
+                </div>
+                <h3 className="text-lg font-bold text-white leading-tight">{pol.name}</h3>
+                <p className="text-white/90 text-xs">{pol.position}</p>
+              </div>
+            </div>
+            <div className="p-3" style={{ borderTop: `3px solid ${pol.color}` }}>
+              <p className="text-slate-700 text-sm font-medium italic mb-2 line-clamp-2">
+                "{pol.tagline}"
+              </p>
+              <p className="text-xs text-slate-600 mb-2">{pol.bio}</p>
+              <div className="flex flex-wrap gap-1">
+                {pol.categories.slice(0, 3).map(cat => (
+                  <span key={cat} className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                    {cat}
+                  </span>
+                ))}
+                {pol.categories.length > 3 && (
+                  <span className="text-xs text-slate-400">+{pol.categories.length - 3}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DetailView({ politician, onCategoryClick }) {
+  const [activeCategory, setActiveCategory] = useState(politician.categories[0]);
+  const categoryData = politician.priorities[activeCategory];
+
+  return (
+    <div className="space-y-6">
+      {/* Hero Section */}
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div 
+          className="h-32 relative"
+          style={{ background: `linear-gradient(135deg, ${politician.color}dd, ${politician.color})` }}
+        >
+          <div className="absolute bottom-3 left-3 right-3 flex items-end space-x-3">
+            <img 
+              src={politician.photo}
+              alt={politician.name}
+              className="w-20 h-20 rounded-lg border-4 border-white shadow-lg object-cover"
+            />
+            <div className="flex-1 pb-1">
+              <h2 className="text-2xl font-bold text-white leading-tight">
+                {politician.name}
+              </h2>
+              <p className="text-white/90 text-sm">{politician.position}</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-4 bg-slate-50">
+          <p className="text-lg text-slate-700 italic font-medium mb-2">
+            "{politician.tagline}"
+          </p>
+          <p className="text-sm text-slate-600">{politician.bio}</p>
+        </div>
+      </div>
+
+      {/* Category Navigation */}
+      <CategoryTabs 
+        categories={politician.categories}
+        activeCategory={activeCategory}
+        onSelect={setActiveCategory}
+        color={politician.color}
+      />
+
+      {/* Active Category Content */}
+      <div 
+        className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-all"
+        onClick={() => onCategoryClick(activeCategory, categoryData)}
+      >
+        <div className="h-1.5" style={{ backgroundColor: politician.color }}></div>
+        <div className="p-5">
+          <div className="flex items-center space-x-3 mb-4">
+            <div 
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
+              style={{ backgroundColor: politician.color + '20' }}
+            >
+              {categoryData.icon}
+            </div>
+            <h3 className="text-2xl font-bold text-slate-900">{activeCategory}</h3>
+          </div>
+          
+          <div className="space-y-3">
+            {categoryData.policies.map((policy, idx) => (
+              <div key={idx} className="border-l-2 pl-3 py-1" style={{ borderColor: politician.color + '40' }}>
+                <p className="font-medium text-slate-900 mb-1">{policy.text}</p>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="text-slate-600">
+                    <span className="font-semibold">Cost:</span> {policy.cost}
+                  </span>
+                  <span className="text-slate-600">•</span>
+                  <span className="text-slate-600">
+                    <span className="font-semibold">Impact:</span> {policy.impact}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-200 text-right">
+            <span className="text-sm font-medium" style={{ color: politician.color }}>
+              Tap to explore connections →
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PolicyDeepDive({ category, categoryData, politician, compareList, onCompareToggle }) {
+  return (
+    <div className="space-y-4">
+      <div className="bg-white rounded-xl shadow-lg p-5">
+        <div className="flex items-center space-x-3 mb-3">
+          <div 
+            className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl"
+            style={{ backgroundColor: politician.color + '20' }}
+          >
+            {categoryData.icon}
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">{category}</h2>
+            <p className="text-sm text-slate-600">
+              {politician.name} • {politician.party}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <span 
+            className="px-3 py-1 rounded-lg text-xs font-semibold text-white"
+            style={{ backgroundColor: politician.color }}
+          >
+            {categoryData.policies.length} POLICIES
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {categoryData.policies.map((policy, idx) => (
+          <div 
+            key={idx}
+            className="bg-white rounded-xl shadow-md p-4"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h4 className="font-bold text-slate-900 mb-2">{policy.text}</h4>
+                <div className="space-y-1 text-sm">
+                  <p className="text-slate-600">
+                    <span className="font-semibold">Cost:</span> {policy.cost}
+                  </p>
+                  <p className="text-slate-600">
+                    <span className="font-semibold">Impact:</span> {policy.impact}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => onCompareToggle(`${politician.id}-${category}-${idx}`)}
+                className={`ml-3 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  compareList.includes(`${politician.id}-${category}-${idx}`)
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-slate-100 text-slate-700'
+                }`}
+              >
+                {compareList.includes(`${politician.id}-${category}-${idx}`) ? '✓' : 'Compare'}
+              </button>
+            </div>
+            
+            <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-200">
+              <span className="text-xs font-semibold text-slate-500">
+                CONNECTS:
+              </span>
+              {policy.connects.map(tag => (
+                <span 
+                  key={tag}
+                  className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [view, setView] = useState('overview');
+  const [selectedPolitician, setSelectedPolitician] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategoryData, setSelectedCategoryData] = useState(null);
+  const [compareList, setCompareList] = useState([]);
+
+  const handlePoliticianClick = (polId) => {
+    setSelectedPolitician(politicianData[polId]);
+    setSelectedCategory(null);
+    setView('detail');
+  };
+
+  const handleCategoryClick = (category, data) => {
+    setSelectedCategory(category);
+    setSelectedCategoryData(data);
+  };
+
+  const toggleCompare = (policyId) => {
+    setCompareList(prev => 
+      prev.includes(policyId) 
+        ? prev.filter(id => id !== policyId)
+        : [...prev, policyId]
+    );
+  };
+
+  const handleBack = () => {
+    if (selectedCategory) {
+      setSelectedCategory(null);
+    } else if (selectedPolitician) {
+      setSelectedPolitician(null);
+      setView('overview');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+      <header className="bg-white/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            {(view !== 'overview' || selectedPolitician) && (
+              <button 
+                onClick={handleBack}
+                className="text-slate-600 hover:text-slate-900 transition-colors text-sm font-medium"
+              >
+                ← Back
+              </button>
+            )}
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Civic Lens
+            </h1>
+          </div>
+          {compareList.length > 0 && (
+            <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">
+              {compareList.length} selected
+            </span>
+          )}
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 py-6">
+        {view === 'overview' && !selectedPolitician && (
+          <OverviewView onSelect={handlePoliticianClick} />
+        )}
+        
+        {view === 'detail' && selectedPolitician && !selectedCategory && (
+          <DetailView 
+            politician={selectedPolitician} 
+            onCategoryClick={handleCategoryClick}
+          />
+        )}
+
+        {view === 'detail' && selectedCategory && (
+          <PolicyDeepDive 
+            category={selectedCategory}
+            categoryData={selectedCategoryData}
+            politician={selectedPolitician}
+            compareList={compareList}
+            onCompareToggle={toggleCompare}
+          />
+        )}
+      </main>
+    </div>
+  );
+}

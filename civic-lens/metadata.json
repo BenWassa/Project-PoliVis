@@ -1,0 +1,5 @@
+{
+  "name": "Civic Lens",
+  "description": "An interactive web application that displays cards for various politicians. Users can click on a card to flip it and view the politician's key policy positions. The interface is clean, minimal, and fully responsive.",
+  "requestFramePermissions": []
+}
