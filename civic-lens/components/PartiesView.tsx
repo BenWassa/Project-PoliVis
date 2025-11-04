@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import type { Politician } from '../types';
+import type { KeyIssue, Politician } from '../types';
 import { Party } from '../types';
 import { TagIcon, UsersIcon } from './icons';
 
 interface PartiesViewProps {
   politicians: Politician[];
+  issues: KeyIssue[];
   onSelectPolitician: (id: number) => void;
 }
 
@@ -25,9 +26,11 @@ const partyInfo: Record<Party, { description: string }> = {
 };
 
 
-const PartiesView: React.FC<PartiesViewProps> = ({ politicians, onSelectPolitician }) => {
+const PartiesView: React.FC<PartiesViewProps> = ({ politicians, issues, onSelectPolitician }) => {
+  const issuesById = useMemo(() => new Map(issues.map(issue => [issue.id, issue.title])), [issues]);
+
   const partiesData = useMemo(() => {
-    const data = new Map<Party, { members: Politician[], leader?: Politician, issues: Set<string> }>();
+    const data = new Map<Party, { members: Politician[]; leader?: Politician; issues: Set<number> }>();
 
     politicians.forEach(p => {
       if (!data.has(p.party)) {
@@ -35,7 +38,7 @@ const PartiesView: React.FC<PartiesViewProps> = ({ politicians, onSelectPolitici
       }
       const partyData = data.get(p.party)!;
       partyData.members.push(p);
-      p.keyIssues.forEach(issue => partyData.issues.add(issue));
+      p.keyIssues.forEach(issueId => partyData.issues.add(issueId));
 
       if (p.position.toLowerCase().includes('leader')) {
         partyData.leader = p;
@@ -46,9 +49,12 @@ const PartiesView: React.FC<PartiesViewProps> = ({ politicians, onSelectPolitici
       party,
       members,
       leader,
-      issues: Array.from(issues).slice(0, 3) // Show top 3 issues for brevity
+      issueTitles: Array.from(issues)
+        .map(issueId => issuesById.get(issueId))
+        .filter((title): title is string => Boolean(title))
+        .slice(0, 3),
     }));
-  }, [politicians]);
+  }, [issuesById, politicians]);
 
   return (
     <section className="space-y-8 animate-fade-in">
@@ -57,7 +63,7 @@ const PartiesView: React.FC<PartiesViewProps> = ({ politicians, onSelectPolitici
         <p className="text-slate-400 mt-1">An overview of the major federal parties.</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {partiesData.map(({ party, members, leader, issues }) => {
+        {partiesData.map(({ party, members, leader, issueTitles }) => {
             const colors = partyColorMap[party];
             return (
                 <div key={party} className={`bg-slate-800/50 border-2 ${colors.border} rounded-2xl p-6 flex flex-col sm:flex-row gap-6`}>
@@ -75,14 +81,16 @@ const PartiesView: React.FC<PartiesViewProps> = ({ politicians, onSelectPolitici
                         <p className="text-slate-300 mt-2 text-sm">{partyInfo[party].description}</p>
                         
                         <div className="mt-4 pt-4 border-t border-slate-700 space-y-2">
-                             <div className="flex items-center gap-2 text-sm">
-                                <UsersIcon className={`w-5 h-5 ${colors.text}`} />
-                                <span className="font-semibold text-white">{members.length}</span>
-                                <span className="text-slate-400">Politicians in dataset</span>
+                            <div className="flex items-center gap-2 text-sm">
+                               <UsersIcon className={`w-5 h-5 ${colors.text}`} />
+                               <span className="font-semibold text-white">{members.length}</span>
+                               <span className="text-slate-400">Politicians in dataset</span>
                             </div>
                              <div className="flex items-center gap-2 text-sm">
-                                <TagIcon className={`w-5 h-5 ${colors.text}`} />
-                                <span className="text-slate-400">Key Focus Areas: {issues.join(', ')}</span>
+                               <TagIcon className={`w-5 h-5 ${colors.text}`} />
+                                <span className="text-slate-400">
+                                  Key Focus Areas: {issueTitles.length > 0 ? issueTitles.join(', ') : 'No data'}
+                                </span>
                             </div>
                         </div>
                     </div>

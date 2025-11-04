@@ -7,10 +7,18 @@ import SideNav from './components/SideNav';
 import GlobalSearchBar from './components/GlobalSearchBar';
 import { POLITICIANS, KEY_ISSUES } from './constants';
 import type { Politician, KeyIssue } from './types';
-import { UsersIcon, TagIcon, MenuIcon } from './components/icons';
-import { BuildingLibraryIcon } from './components/icons';
+import { UsersIcon, TagIcon, MenuIcon, BuildingLibraryIcon } from './components/icons';
+import useBodyScrollLock from './hooks/useBodyScrollLock';
 
 type View = 'politicians' | 'parties' | 'issues';
+
+const getSortWeight = (politician: Politician) => {
+  const position = politician.position.toLowerCase();
+  if (position.includes('prime minister')) return 1;
+  if (position.includes('leader')) return 2;
+  if (position.includes('deputy prime minister')) return 3;
+  return 4;
+};
 
 interface TabButtonProps {
   view: View;
@@ -36,8 +44,8 @@ const TabButton: React.FC<TabButtonProps> = ({ view, label, icon, activeView, on
 
 
 const App: React.FC = () => {
-  const [politicians] = useState<Politician[]>(POLITICIANS);
-  const [keyIssues] = useState<KeyIssue[]>(KEY_ISSUES);
+  const politicians = useMemo<Politician[]>(() => POLITICIANS, []);
+  const keyIssues = useMemo<KeyIssue[]>(() => KEY_ISSUES, []);
   const [selectedPoliticianId, setSelectedPoliticianId] = useState<number | null>(null);
   const [activeView, setActiveView] = useState<View>('politicians');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,37 +59,24 @@ const App: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (selectedPoliticianId !== null || isNavOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [selectedPoliticianId, isNavOpen]);
+  useBodyScrollLock(selectedPoliticianId !== null || isNavOpen);
 
 
   const sortedPoliticians = useMemo(() => {
-    const getSortWeight = (p: Politician) => {
-        if (p.position.toLowerCase().includes('prime minister')) return 1;
-        if (p.position.toLowerCase().includes('leader')) return 2;
-        if (p.position.toLowerCase().includes('deputy prime minister')) return 3;
-        return 4;
-    };
     return [...politicians].sort((a, b) => {
-        const weightA = getSortWeight(a);
-        const weightB = getSortWeight(b);
-        if (weightA !== weightB) {
-            return weightA - weightB;
-        }
-        return a.name.localeCompare(b.name);
+      const weightA = getSortWeight(a);
+      const weightB = getSortWeight(b);
+      if (weightA !== weightB) {
+        return weightA - weightB;
+      }
+      return a.name.localeCompare(b.name);
     });
   }, [politicians]);
 
   const selectedPolitician = useMemo(() => {
-    if (!selectedPoliticianId) return null;
+    if (selectedPoliticianId === null) {
+      return null;
+    }
     return politicians.find(p => p.id === selectedPoliticianId) ?? null;
   }, [selectedPoliticianId, politicians]);
 
@@ -162,9 +157,10 @@ const App: React.FC = () => {
           />
         )}
         {activeView === 'parties' && (
-          <PartiesView 
-            politicians={politicians} 
-            onSelectPolitician={handleSelectPolitician} 
+          <PartiesView
+            politicians={politicians}
+            issues={keyIssues}
+            onSelectPolitician={handleSelectPolitician}
           />
         )}
         {activeView === 'issues' && <IssuesView issues={keyIssues} />}
