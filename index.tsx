@@ -15,3 +15,21 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+const splashElement = document.getElementById('app-splash');
+if (splashElement) {
+  requestAnimationFrame(() => {
+    splashElement.classList.add('splash-screen--hidden');
+    splashElement.addEventListener(
+      'transitionend',
+      () => {
+        splashElement.remove();
+      },
+      { once: true }
+    );
+  });
+}
+
+requestAnimationFrame(() => {
+  rootElement.classList.add('app-root--visible');
+});
