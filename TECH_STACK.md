@@ -135,7 +135,7 @@ npm run preview                # Preview production build locally
 
 ### Versioning
 ```bash
-npm run version:update         # Update version.ts (auto-runs in build)
+npm run version:update         # Update version.ts (safe to run before/after build)
 npm run version:patch          # Bump patch version (1.0.0 → 1.0.1)
 npm run version:minor          # Bump minor version (1.0.0 → 1.1.0)
 npm run version:major          # Bump major version (1.0.0 → 2.0.0)
@@ -143,12 +143,14 @@ npm run version:major          # Bump major version (1.0.0 → 2.0.0)
 
 ### Build Pipeline
 ```bash
-npm run postbuild              # Post-build hook (updates service worker version)
+npm run version:update         # Update version.ts (safe to run before build)
+npm run build                  # Full build: version update + vite build + postbuild
+npm run postbuild              # Update service worker in dist/ (runs after build)
 ```
 
 **Build Flow:**
-1. `npm run version:update` - Updates `version.ts` with current version & build date
-2. `vite build` - Bundles app for production → `dist/`
+1. `npm run version:update` - Updates `version.ts` with current version & build date (can run before build)
+2. `vite build` - Bundles app for production → `dist/` (copies `public/` files)
 3. `npm run postbuild` - Updates service worker version in `dist/service-worker.js`
 
 ---

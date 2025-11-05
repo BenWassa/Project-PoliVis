@@ -147,7 +147,7 @@ npm run preview          # Preview production build locally
 
 ### Versioning (Auto-managed)
 ```bash
-npm run version:update   # Update version.ts (runs automatically in build)
+npm run version:update   # Update version.ts (safe to run before/after build)
 npm run version:patch    # Bump patch version (1.0.0 -> 1.0.1)
 npm run version:minor    # Bump minor version (1.0.0 -> 1.1.0)
 npm run version:major    # Bump major version (1.0.0 -> 2.0.0)
