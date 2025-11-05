@@ -3,166 +3,152 @@ import { Party, Politician, KeyIssue } from './types';
 export const KEY_ISSUES: KeyIssue[] = [
   {
     id: 1,
-    title: 'Carbon Tax',
-    description: 'Debate over carbon pricing mechanisms continues to be a central political issue under the new government.',
+    title: 'Carbon Pricing & Climate Policy',
+    description: 'Following the transition in government, debate continues over how Canada will meet its climate targets, reform carbon pricing, and align resource development with climate action.'
   },
   {
     id: 2,
-    title: 'Healthcare Expansion',
-    description: 'Proposals to broaden public healthcare, including dental and pharmacare, and federal-provincial funding agreements.',
+    title: 'Health Care & Pharmacare Expansion',
+    description: 'Efforts remain to expand public health programs (e.g., dental care, pharmacare) and renew federal-provincial funding agreements amid cost-of-living pressures.'
   },
   {
     id: 3,
-    title: 'Housing Affordability',
-    description: 'Strategies to address the rising cost of housing by increasing supply and reducing municipal red tape.',
+    title: 'Housing Affordability & Supply',
+    description: 'The housing crisis is a major focus: addressing high costs, accelerating supply, reforming zoning and municipal red tape, and supporting first-time buyers and renters.'
   },
   {
     id: 4,
-    title: 'International Relations',
-    description: 'Focus on Canada\'s role on the global stage, including trade, diplomacy, and national sovereignty.',
+    title: 'International Relations & Sovereignty',
+    description: 'Canada’s role on the global stage remains central — trade, diplomacy (especially vis-à-vis the U.S.), defence alliances, and national sovereignty in shifting world order.'
   },
   {
     id: 5,
-    title: 'Quebec Sovereignty',
-    description: 'Advocacy for the protection of Quebec\'s culture, language, and political autonomy.',
+    title: 'Quebec Autonomy & Language Rights',
+    description: 'The question of Quebec’s cultural, linguistic and provincial autonomy remains politically salient, including federal-provincial tensions over jurisdiction.'
   },
   {
     id: 6,
-    title: 'Environmental Policy',
-    description: 'Comprehensive strategies for environmental protection, resource development, and meeting climate targets.',
+    title: 'Environmental & Resource Policy',
+    description: 'Balancing resource development (oil, gas, minerals) with environmental protection, Indigenous reconciliation, and meeting climate commitments.'
   },
   {
-    id: 7,
-    title: 'Fiscal Policy',
-    description: 'Management of government revenue, spending, and debt to influence the economy.',
+    id=7,
+    title: 'Fiscal & Budgetary Policy',
+    description: 'Managing government spending, revenue, debt and deficits is a core issue — especially given economic headwinds, new defence and housing commitments, and public-service demands.'
   },
   {
     id: 8,
-    title: 'Indigenous Reconciliation',
-    description: 'Actions to address the legacy of residential schools and advance the rights of Indigenous peoples.',
+    title: 'Indigenous Reconciliation & Rights',
+    description: 'Advancing reconciliation, implementing commitments to Indigenous peoples, addressing legacy issues and ensuring rights, land and self-governance frameworks.'
   },
   {
     id: 9,
-    title: 'National Defence',
-    description: 'Policies concerning the Canadian Armed Forces, military spending, and national security.',
+    title: 'National Defence & Security',
+    description: 'With rising global tensions and new alliance commitments, defence spending, Arctic sovereignty, procurement and Canada’s role in NATO are key issues.'
   },
   {
     id: 10,
     title: 'Energy & Natural Resources',
-    description: 'Policies on the development, regulation, and export of Canada\'s natural resources, including oil, gas, and renewables.',
+    description: 'Policy concerning Canada’s natural-resource sectors (oil, gas, critical minerals, renewables), exports, regulatory regimes, and transition strategies.'
   },
   {
     id: 11,
-    title: 'Debt Reduction',
-    description: 'New government priority focusing on balancing the federal budget and controlling national debt.',
+    title: 'Budget Deficit & Debt Control',
+    description: 'The new government signals the need for deficit reduction, fiscal discipline and controlling national debt, while balancing investments in housing, defence and climate.'
   },
   {
     id: 12,
-    title: 'Digital Sovereignty',
-    description: 'Policies concerning data privacy, competition in the tech sector, and regulation of online content.',
+    title: 'Digital Economy & Tech Sovereignty',
+    description: 'Data privacy, competition in the tech sector, regulation of online platforms and Canada’s position in digital supply-chains and innovation ecosystems.'
   },
   {
     id: 13,
-    title: 'Supply Chain Resilience',
-    description: 'Strengthening domestic manufacturing and trade corridors to ensure economic stability.',
+    title: 'Supply-Chain Resilience & Economic Diversification',
+    description: 'Strengthening domestic manufacturing, diversifying trade partners, building resilient supply-chains and reducing economic dependence on single trading partners.'
   },
 ];
 
 export const POLITICIANS: Politician[] = [
   {
+    id: 1,
+    name: 'Mark Carney',
+    party: Party.Liberal,
+    position: 'Prime Minister of Canada',
+    termInfo: 'In office since March 14, 2025',
+    photoUrl: 'https://picsum.photos/id/1004/200/200',
+    bio: 'Mark Carney became the leader of the Liberal Party in March 2025 and was sworn in as Canada’s 24th Prime Minister. His administration leads a Liberal minority government focused on affordability, fiscal discipline, defence investment and redefining Canada’s place globally.',
+    policies: [
+      'Announced that Budget 2025 will combine **investment in key priorities** with **spending restraint** and operational cuts. :contentReference[oaicite:0]{index=0}',
+      'Committed Canada to meet NATO defence-spending targets ahead of schedule. :contentReference[oaicite:1]{index=1}',
+      'Launched a new federal housing agency (Build Canada Homes) to accelerate affordable housing construction. :contentReference[oaicite:2]{index=2}',
+      'Revamped inter-provincial trade regime (the “One Canadian Economy Act”) removing barriers to internal trade. :contentReference[oaicite:3]{index=3}',
+    ],
+    socials: {
+      website: 'https://www.markcarney.ca/',
+      twitter: 'MarkJCarney'
+    },
+    keyIssues: [7,3,9,4,13],
+    relatedPoliticianIds: [6,2,12],
+    career: [
+      { year: 2025, role: 'Prime Minister of Canada', description: 'Leads a Liberal minority government.' },
+      { year: 2025, role: 'Leader of the Liberal Party of Canada', description: 'Elected March 9, 2025 with ~86% of the vote. :contentReference[oaicite:4]{index=4}' },
+      { year: 2023, role: 'Governor of the Bank of England', description: 'Pre-political career as a central banker.' }
+    ],
+    committeeMemberships: [],
+    notableQuotes: [
+      { text: '"We will spend less so we can invest more in Canada’s long-term growth."', source: 'October 10 2025 Budget announcement' }
+    ]
+  },
+  {
     id: 2,
     name: 'Pierre Poilievre',
     party: Party.Conservative,
-    position: 'Prime Minister of Canada',
-    termInfo: 'In office since 2025',
+    position: 'Leader of the Official Opposition (Conservative Party)',
+    termInfo: 'Leader since September 10, 2022',
     photoUrl: 'https://picsum.photos/id/1074/200/200',
-    bio: 'Pierre Poilievre is the 24th Prime Minister of Canada, having led the Conservative Party to a minority government victory in the 2025 federal election. His government focuses on fiscal responsibility, reducing the cost of living, and accelerating economic growth.',
+    bio: 'Pierre Poilievre has served as leader of the Conservative Party and, following the April 2025 election loss and his own riding defeat, returned via a by-election to the House of Commons in August 2025. He remains the Opposition leader and is focused on cost-of-living, saving, and tax relief policies.',
     policies: [
-      'Introduced the "Common Sense Act" to reduce federal spending and balance the budget.',
-      'Repealed the federal carbon tax for consumers to lower fuel prices.',
-      'Launched federal initiatives to partner with municipalities to fast-track housing construction.',
-      'Supports resource development projects to enhance energy independence.',
+      'Champions lower taxes and smaller government, emphasising fiscal restraint and affordability. :contentReference[oaicite:5]{index=5}',
+      'Critiques the government’s spending plans and aims to position the Conservatives as the party of “common-sense” governance. :contentReference[oaicite:6]{index=6}'
     ],
     socials: {
       website: 'https://www.conservative.ca/',
-      twitter: 'PierrePoilievre',
+      twitter: 'PierrePoilievre'
     },
-    keyIssues: [7, 3, 10, 11, 1],
-    relatedPoliticianIds: [6, 3, 4, 14, 12],
+    keyIssues: [7,3,10,1],
+    relatedPoliticianIds: [1,6],
     career: [
-        { year: 2025, role: 'Prime Minister of Canada', description: 'Leads the Government of Canada with a minority mandate.' },
-        { year: 2022, role: 'Leader of the Conservative Party', description: 'Led the party to victory in the 2025 election.' },
-        { year: 2017, role: 'Shadow Minister for Finance & Jobs', description: 'Served as a prominent critic of the government\'s economic policies.' },
-        { year: 2004, role: 'Member of Parliament for Carleton', description: 'Represents his riding for over two decades.' },
-    ],
-    committeeMemberships: [
-        { name: 'Cabinet', role: 'Chair' },
-    ],
-    notableQuotes: [
-        { text: '"A new government with a clear mandate: axe the tax, build the homes, fix the budget."', source: '2025 Victory Speech' },
-        { text: '"Bring it home."', source: 'Campaign Slogan' },
-    ],
-  },
-  {
-    id: 6,
-    name: 'Chrystia Freeland',
-    party: Party.Liberal,
-    position: 'Leader of the Opposition & Interim Liberal Leader',
-    termInfo: 'Interim Leader since 2025',
-    photoUrl: 'https://picsum.photos/id/65/200/200',
-    bio: 'Following the 2025 election, Chrystia Freeland was selected as the Interim Leader of the Liberal Party, becoming the Leader of the Official Opposition. She now leads the party\'s efforts to hold the new government accountable.',
-    policies: [
-      'Leading the Official Opposition\'s critique of the government\'s fiscal plan and spending cuts.',
-      'Advocating for the protection of national social programs like dental care and child care.',
-      'Championing Canada\'s continued role in international alliances and a rules-based global order.',
-      'Holding the government to account on environmental commitments and climate change.',
-    ],
-    socials: {
-      twitter: 'cafreeland',
-    },
-    keyIssues: [7, 2, 4, 6],
-    relatedPoliticianIds: [2, 1, 3, 4, 14],
-    career: [
-      { year: 2025, role: 'Leader of the Opposition & Interim Liberal Leader', description: 'Leads the Liberal Party in the House of Commons.' },
-      { year: 2020, role: 'Minister of Finance', description: 'First woman to hold the position.' },
-      { year: 2019, role: 'Deputy Prime Minister of Canada', description: 'Served as Prime Minister Trudeau\'s second-in-command.' },
-      { year: 2013, role: 'Member of Parliament', description: 'Represents University—Rosedale.' },
+      { year: 2022, role: 'Leader of the Conservative Party of Canada', description: 'Elected as party leader.' },
+      { year: 2004, role: 'Member of Parliament for Carleton (later Battle River–Crowfoot)', description: 'Long-time MP.' }
     ],
     committeeMemberships: [],
     notableQuotes: [
-      { text: '"Our role is to be a constructive, but tough and determined, opposition."', source: 'Press Conference, 2025' },
-    ],
+      { text: '"Canada is broken, but together we can fix it."', source: 'Campaign remark' }
+    ]
   },
   {
     id: 3,
-    name: 'Jagmeet Singh',
+    name: 'Don Davies',
     party: Party.NDP,
-    position: 'Leader of the NDP',
-    termInfo: 'Leader since 2017',
+    position: 'Interim Leader of the New Democratic Party',
+    termInfo: 'In office since May 5, 2025',
     photoUrl: 'https://picsum.photos/id/373/200/200',
-    bio: 'Jagmeet Singh continues to lead the NDP, which holds a significant position in the new minority parliament. His focus remains on using the party\'s influence to advocate for social programs and affordability for working families.',
+    bio: 'Don Davies serves as interim leader of the NDP after the party’s historic defeat in the 2025 election and the resignation of former leader Jagmeet Singh. He leads a reduced caucus and is spearheading internal party renewal ahead of a leadership race in 2026. :contentReference[oaicite:7]{index=7}',
     policies: [
-      'Using the NDP\'s position to protect national dental care and pharmacare programs.',
-      'Advocates for an excess profit tax on large corporations.',
-      'Pushing for federal investment in affordable housing and transit.',
-      'Opposing rollbacks of environmental regulations.',
+      'Advocates for workers’ rights, social justice and strengthening public services while rebuilding the party’s base.',
     ],
     socials: {
       website: 'https://www.ndp.ca/',
-      twitter: 'theJagmeetSingh',
+      twitter: 'DonDavies'
     },
-    keyIssues: [2, 3, 7, 8],
-    relatedPoliticianIds: [2, 6, 4, 14, 13],
+    keyIssues: [2,8,6],
+    relatedPoliticianIds: [1,2],
     career: [
-        { year: 2017, role: 'Leader of the New Democratic Party', description: 'Leads the federal NDP through multiple minority parliaments.' },
-        { year: 2019, role: 'Member of Parliament for Burnaby South', description: 'Represents his riding in the House of Commons.' },
-        { year: 2011, role: 'Member of Provincial Parliament (Ontario)', description: 'Served as Deputy Leader of the Ontario NDP.' },
+      { year: 2025, role: 'Interim Leader of the NDP', description: 'Appointed after 2025 federal election.' },
+      { year: 2008, role: 'Member of Parliament for Vancouver Kingsway', description: 'Long-time MP.' }
     ],
     committeeMemberships: [],
-    notableQuotes: [
-        { text: '"We will use every tool we have to fight for Canadians."', source: 'Statement on 2025 Election Results' },
-        { text: '"Love and Courage."', source: 'Autobiography Title & Personal Motto' },
-    ],
+    notableQuotes: []
   },
   {
     id: 4,
@@ -171,206 +157,46 @@ export const POLITICIANS: Politician[] = [
     position: 'Leader of the Bloc Québécois',
     termInfo: 'Leader since 2019',
     photoUrl: 'https://picsum.photos/id/431/200/200',
-    bio: 'Yves-François Blanchet continues his leadership of the Bloc Québécois, ensuring the party remains a strong voice for Quebec\'s interests and autonomy within the new minority government.',
+    bio: 'Yves-François Blanchet leads the Bloc Québécois, advocating for Quebec’s interests, language rights and provincial autonomy in the federal context.',
     policies: [
-      'Vigilantly defending Quebec\'s jurisdiction against federal overreach.',
-      'Promoting the French language and Quebec culture at the federal level.',
-      'Ensuring Quebec receives its fair share of federal funding, particularly for infrastructure and green energy.',
+      'Defends Quebec’s jurisdiction and French-language protections at the federal level.',
+      'Pushes for infrastructure and energy-transition funding for Quebec’s regions.'
     ],
     socials: {
-      twitter: 'yfblanchet',
+      twitter: 'yfblanchet'
     },
-    keyIssues: [5, 4, 7],
-    relatedPoliticianIds: [2, 6, 3],
+    keyIssues: [5,4,7],
+    relatedPoliticianIds: [1,2],
     career: [
-        { year: 2019, role: 'Leader of the Bloc Québécois', description: 'Maintains a strong federal presence for the party.' },
-        { year: 2012, role: 'Quebec Minister of Sustainable Development', description: 'Served in the provincial cabinet under Pauline Marois.' },
+      { year: 2019, role: 'Leader of the Bloc Québécois', description: 'Elected leader.' }
     ],
     committeeMemberships: [],
     notableQuotes: [
-        { text: '"Le Québec, c\'est nous." (Quebec, that\'s us.)', source: 'Party Slogan' },
-    ],
-  },
-  {
-    id: 14,
-    name: 'Jonathan Wilkinson',
-    party: Party.Green,
-    position: 'Leader of the Green Party',
-    termInfo: 'Leader since 2025',
-    photoUrl: 'https://picsum.photos/id/561/200/200',
-    bio: 'Jonathan Wilkinson assumed the sole leadership of the Green Party in 2025. He champions a platform that integrates bold climate action with social and economic justice for all Canadians.',
-    policies: [
-        'Advocating for a Guaranteed Livable Income to address poverty.',
-        'Pushing for a rapid transition to a 100% renewable energy grid.',
-        'Linking environmental action with social justice outcomes and reconciliation.',
-    ],
-    socials: { twitter: 'jonathanwp' },
-    keyIssues: [6, 3, 7],
-    relatedPoliticianIds: [2, 6, 3, 4, 5],
-    career: [
-      { year: 2025, role: 'Leader of the Green Party of Canada', description: '' },
-      { year: 2022, role: 'Co-Leader of the Green Party of Canada', description: '' },
-      { year: 2021, role: 'Member of Parliament for Notre-Dame-de-Grâce—Westmount', description: '' },
-    ],
-    committeeMemberships: [],
-    notableQuotes: []
-  },
-  {
-    id: 1,
-    name: 'Justin Trudeau',
-    party: Party.Liberal,
-    position: 'Member of Parliament',
-    termInfo: 'Prime Minister 2015-2025',
-    photoUrl: 'https://picsum.photos/id/64/200/200',
-    bio: 'After serving as the 23rd Prime Minister of Canada for a decade, Justin Trudeau stepped down as leader of the Liberal Party following the 2025 election. He continues to serve his constituents as the Member of Parliament for Papineau.',
-    policies: [
-      'Implemented a national price on carbon pollution.',
-      'Introduced the Canada Child Benefit to support families.',
-      'Negotiated the Canada-U.S.-Mexico Agreement (CUSMA).',
-      'Launched national early learning and child care agreements.',
-    ],
-    socials: {
-      website: 'https://pm.gc.ca/en',
-      twitter: 'JustinTrudeau',
-    },
-    keyIssues: [1, 2, 4, 8],
-    relatedPoliticianIds: [6],
-    career: [
-      { year: 2015, role: 'Prime Minister of Canada', description: 'Led the Government of Canada through multiple majority and minority terms.' },
-      { year: 2025, role: 'Member of Parliament for Papineau', description: 'Continues to represent his Montreal riding.' },
-      { year: 2013, role: 'Leader of the Liberal Party', description: 'Rebuilt the party and led it to a majority victory in the 2015 federal election.' },
-    ],
-    committeeMemberships: [],
-    notableQuotes: [
-      { text: '"Better is always possible."', source: '2015 Election Campaign Slogan' },
-      { text: '"In Canada, diversity is our strength."', source: 'Frequent Public Statement' },
-    ],
+      { text: '"Le Québec, c’est nous."', source: 'Party slogan' }
+    ]
   },
   {
     id: 12,
     name: 'Leslyn Lewis',
     party: Party.Conservative,
-    position: 'Minister of Foreign Affairs',
-    termInfo: 'In office since 2025',
+    position: 'Deputy Leader of the Conservative Party / Shadow Minister of Foreign Affairs',
+    termInfo: 'Appointed 2025 (Shadow Cabinet)',
     photoUrl: 'https://picsum.photos/id/1078/200/200',
-    bio: 'A prominent voice within the Conservative party, Leslyn Lewis was appointed Minister of Foreign Affairs in the new government. With a PhD in international law, she brings a focus on national sovereignty to Canada\'s foreign policy.',
+    bio: 'Leslyn Lewis serves as a senior Conservative MP and a key figure in the party’s foreign-policy and sovereignty agenda.',
     policies: [
-      'Refocusing Canada\'s foreign policy on key alliances and national interests.',
-      'Leading Canada\'s diplomatic presence on the world stage.',
-      'Reviewing international agreements to ensure they benefit Canadians.',
-    ],
-    socials: { twitter: 'LeslynLewis' },
-    keyIssues: [7, 4, 12],
-    relatedPoliticianIds: [2],
-    career: [
-      { year: 2025, role: 'Minister of Foreign Affairs', description: ''},
-      { year: 2021, role: 'Member of Parliament for Haldimand—Norfolk', description: '' },
-      { year: 2020, role: 'Conservative Leadership Candidate', description: 'Finished third in 2020 and 2022, showing strong grassroots support.' },
-    ],
-    committeeMemberships: [],
-    notableQuotes: [
-      { text: '"No hidden agenda, just common sense."', source: 'Leadership Campaign Slogan' }
-    ]
-  },
-  {
-    id: 5,
-    name: 'Elizabeth May',
-    party: Party.Green,
-    position: 'Member of Parliament',
-    termInfo: 'Co-Leader 2022-2025',
-    photoUrl: 'https://picsum.photos/id/559/200/200',
-    bio: 'A veteran environmentalist and respected parliamentarian, Elizabeth May stepped down as co-leader in 2025 to focus on her work as the Member of Parliament for Saanich—Gulf Islands and as a leading advocate for climate action.',
-    policies: [
-      'Implement aggressive, science-based targets for greenhouse gas reduction.',
-      'Champion a transition to a green economy through investments in renewable energy.',
-      'Advocate for electoral reform to create a more proportional system.',
+      'Emphasises Canada’s national sovereignty, strong alliances, and reforms to foreign-policy practice.'
     ],
     socials: {
-      twitter: 'ElizabethMay',
+      twitter: 'LeslynLewis'
     },
-    keyIssues: [1, 6, 2],
-    relatedPoliticianIds: [14],
+    keyIssues: [4,12,7],
+    relatedPoliticianIds: [2],
     career: [
-        { year: 2022, role: 'Co-Leader of the Green Party of Canada', description: 'Returned to a leadership role, sharing duties with Jonathan Wilkinson.' },
-        { year: 2011, role: 'Member of Parliament for Saanich—Gulf Islands', description: 'The first Green Party MP ever elected in Canada.' },
-        { year: 2006, role: 'Leader of the Green Party of Canada', description: 'Longest-serving female leader of a Canadian federal party.' },
-    ],
-    committeeMemberships: [
-        { name: 'Standing Committee on Environment and Sustainable Development', role: 'Member' },
-    ],
-    notableQuotes: [
-        { text: '"We are not defenders of the environment, we are the environment defending itself."', source: 'Public Statement' },
-    ],
-  },
-  {
-    id: 11,
-    name: 'Mélanie Joly',
-    party: Party.Liberal,
-    position: 'Member of Parliament',
-    termInfo: 'Minister of Foreign Affairs 2021-2025',
-    photoUrl: 'https://picsum.photos/id/66/200/200',
-    bio: 'Mélanie Joly is a senior Liberal MP and serves as a key voice for Quebec within the Official Opposition, having previously served as Minister of Foreign Affairs.',
-    policies: [
-      'Holds the government accountable on its foreign policy decisions.',
-      'Advocates for a rules-based international order and human rights.',
-    ],
-    socials: { twitter: 'melaniejoly' },
-    keyIssues: [4, 5, 9],
-    relatedPoliticianIds: [1, 6],
-    career: [
-      { year: 2021, role: 'Minister of Foreign Affairs', description: '' },
-      { year: 2019, role: 'Minister of Economic Development and Official Languages', description: '' },
-      { year: 2015, role: 'Member of Parliament for Ahuntsic-Cartierville', description: '' },
+      { year: 2021, role: 'Member of Parliament for Haldimand–Norfolk', description: 'Elected MP.' }
     ],
     committeeMemberships: [],
     notableQuotes: [
-      { text: '"Diplomacy is about showing up."', source: 'Public Statement' }
+      { text: '"No hidden agenda, just common sense."', source: 'Leadership campaign slogan' }
     ]
-  },
-  {
-    id: 13,
-    name: 'Alexandre Boulerice',
-    party: Party.NDP,
-    position: 'Deputy Leader of the NDP',
-    termInfo: 'MP since 2011',
-    photoUrl: 'https://picsum.photos/id/378/200/200',
-    bio: 'Alexandre Boulerice is a long-serving NDP Member of Parliament from Quebec and serves as the party\'s Deputy Leader. A former journalist and union advisor, he is a passionate advocate for workers\' rights and social justice issues.',
-    policies: [
-      'Strong advocate for union rights and fair wages.',
-      'Focuses on environmental issues and a just transition for workers.',
-      'Acts as a key spokesperson for the NDP in Quebec.',
-    ],
-    socials: { twitter: 'boulerice' },
-    keyIssues: [2, 7, 6, 5],
-    relatedPoliticianIds: [3],
-    career: [
-      { year: 2011, role: 'Member of Parliament for Rosemont—La Petite-Patrie', description: 'Part of the "Orange Wave" that swept Quebec in 2011.' },
-      { year: 2025, role: 'Deputy Leader of the NDP', description: '' },
-    ],
-    committeeMemberships: [],
-    notableQuotes: []
-  },
-   {
-    id: 15,
-    name: 'Bill Blair',
-    party: Party.Liberal,
-    position: 'Member of Parliament',
-    termInfo: 'Minister of National Defence 2023-2025',
-    photoUrl: 'https://picsum.photos/id/68/200/200',
-    bio: 'Bill Blair is a senior Liberal MP, drawing on his extensive experience in law enforcement and as a former cabinet minister, including Minister of National Defence. He is a prominent voice on public safety and defence issues.',
-    policies: [
-        'Advocates for modernizing the Canadian Armed Forces.',
-        'Focuses on national security and Canada\'s contributions to alliances like NATO.',
-    ],
-    socials: { twitter: 'BillBlair' },
-    keyIssues: [9, 4, 7],
-    relatedPoliticianIds: [1, 6, 11],
-    career: [
-      { year: 2023, role: 'Minister of National Defence', description: '' },
-      { year: 2019, role: 'Minister of Public Safety', description: 'Handled files related to policing, firearms, and border security.' },
-      { year: 2015, role: 'Member of Parliament for Scarborough Southwest', description: '' },
-    ],
-    committeeMemberships: [],
-    notableQuotes: []
-  },
+  }
 ];
