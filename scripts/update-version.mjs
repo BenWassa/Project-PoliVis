@@ -10,24 +10,13 @@ const packageJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
 );
 
-// Read service worker template
-const swPath = path.join(__dirname, '../service-worker.js');
-let swContent = fs.readFileSync(swPath, 'utf-8');
-
-// Replace version placeholder
-swContent = swContent.replace('__APP_VERSION__', packageJson.version);
-
-// Write to dist folder (this runs after build)
-const distPath = path.join(__dirname, '../dist/service-worker.js');
-fs.writeFileSync(distPath, swContent);
-
 console.log(`✓ Service worker version updated to ${packageJson.version}`);
 
-// Also update version.ts with current build date
+// Always update version.ts (this can run before build)
 const versionPath = path.join(__dirname, '../version.ts');
 const versionContent = `/**
  * Application Version Configuration
- * 
+ *
  * Single source of truth for version number across the entire app.
  * Update this file when releasing new versions.
  */
@@ -52,4 +41,22 @@ export const getFullVersionString = () => \`v\${APP_VERSION} (\${new Date(BUILD_
 `;
 
 fs.writeFileSync(versionPath, versionContent);
-console.log(`✓ version.ts updated with build date`);
+console.log('✓ version.ts updated with build date');
+
+// Only update dist/service-worker.js if it exists (after build)
+const swPath = path.join(__dirname, '../service-worker.js');
+const distPath = path.join(__dirname, '../dist/service-worker.js');
+
+if (fs.existsSync(distPath)) {
+  // Read service worker template
+  let swContent = fs.readFileSync(swPath, 'utf-8');
+
+  // Replace version placeholder
+  swContent = swContent.replace('__APP_VERSION__', packageJson.version);
+
+  // Write to dist folder
+  fs.writeFileSync(distPath, swContent);
+  console.log('✓ Service worker in dist/ updated');
+} else {
+  console.log('ℹ️  Skipping dist/service-worker.js update (file not found - run after build)');
+}
