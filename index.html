@@ -44,7 +44,10 @@
 </head>
   <body class="bg-slate-900 text-slate-200">
     <div id="app-splash" class="splash-screen" role="presentation" aria-hidden="true">
-      <img src="%BASE_URL%assets/PoliVis_splash.png" alt="PoliVis splash screen" class="splash-screen__image" />
+      <div class="splash-screen__frame">
+        <img src="%BASE_URL%assets/PoliVis_splash_2.png" alt="PoliVis splash screen" class="splash-screen__image" onerror="this.style.display='none';" />
+        <div class="splash-screen__blur-mask"></div>
+      </div>
     </div>
     <div id="root" class="app-root"></div>
     <script type="module" src="/index.tsx"></script>
