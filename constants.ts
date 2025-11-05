@@ -32,7 +32,7 @@ export const KEY_ISSUES: KeyIssue[] = [
     description: 'Balancing resource development (oil, gas, minerals) with environmental protection, Indigenous reconciliation, and meeting climate commitments.'
   },
   {
-    id=7,
+    id: 7,
     title: 'Fiscal & Budgetary Policy',
     description: 'Managing government spending, revenue, debt and deficits is a core issue — especially given economic headwinds, new defence and housing commitments, and public-service demands.'
   },
