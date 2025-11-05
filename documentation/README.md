@@ -42,8 +42,8 @@ Think of it as a "Pokédex for politics"—approachable, aesthetic, and data-dri
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- Node.js (v16 or higher) - **Current tested version: v22.20.0**
+- npm (v6 or higher) - **Current tested version: v10.9.3**
 
 ### Installation
 
@@ -73,7 +73,40 @@ npm run build
 
 The built files will be in the `dist/` directory, ready for deployment to any static hosting service.
 
-## � Troubleshooting
+### Preview Production Build
+
+After building, you can preview the production build locally:
+```bash
+npm run preview
+```
+
+This will serve the built files from `dist/` on [http://localhost:4173](http://localhost:4173)
+
+## 📋 Available Scripts
+
+| Command | Description | Port |
+|---------|-------------|------|
+| `npm run dev` | Start development server with hot reload | 3000 |
+| `npm run build` | Build for production (outputs to `dist/`) | - |
+| `npm run preview` | Preview production build locally | 4173 |
+
+## 🔧 Troubleshooting
+
+### Windows PowerShell: "cannot be loaded because running scripts is disabled"
+
+**Problem:** PowerShell execution policy prevents npm from running.
+
+**Solution:** Use `cmd` instead of PowerShell, or run commands with `cmd /c`:
+```bash
+cmd /c npm install
+cmd /c npm run dev
+cmd /c npm run build
+```
+
+**Alternative:** Change PowerShell execution policy (admin required):
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
 ### "Refused to apply style" or 404 errors when previewing index.html
 
@@ -97,9 +130,12 @@ If you see "Port 3000 is already in use", either:
 
 ### Build fails
 
-- Ensure Node.js v16+ is installed
-- Clear node_modules: `rm -rf node_modules && npm install`
+- Ensure Node.js v16+ is installed: `node --version`
+- Clear node_modules and reinstall:
+  - Windows: `rmdir /s /q node_modules && npm install`
+  - macOS/Linux: `rm -rf node_modules && npm install`
 - Check for TypeScript errors: `npm run build`
+- Try clearing Vite cache: delete the `node_modules/.vite` folder
 
 ## �📱 Usage
 

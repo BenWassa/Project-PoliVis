@@ -14,6 +14,15 @@ For full documentation, setup instructions, and development guide, see:
 
 ## 🚀 Quick Start
 
+### Windows (PowerShell/CMD)
+```bash
+git clone https://github.com/BenWassa/Project-PoliVis.git
+cd Project-PoliVis
+npm install
+npm run dev
+```
+
+### macOS/Linux
 ```bash
 git clone https://github.com/BenWassa/Project-PoliVis.git
 cd Project-PoliVis
