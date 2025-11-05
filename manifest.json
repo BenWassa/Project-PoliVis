@@ -1,7 +1,7 @@
 {
-  "short_name": "Civic Lens",
-  "name": "Civic Lens: Canadian Politics Explorer",
-  "description": "An interactive web application that displays cards for various politicians, allowing users to explore their career, policies, and connections.",
+  "short_name": "PoliVis",
+  "name": "PoliVis: Canadian Politics Explorer",
+  "description": "A mobile-first PWA for exploring Canadian politics through clean, data-driven interfaces. Making politics personal and understandable.",
   "icons": [
     {
       "src": "/assets/icon-192.png",
@@ -16,10 +16,12 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "theme_color": "#1e293b",
-  "background_color": "#0f172a"
+  "background_color": "#0f172a",
+  "categories": ["politics", "news", "education"],
+  "prefer_related_applications": false
 }

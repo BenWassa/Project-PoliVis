@@ -1,35 +1,71 @@
-const CACHE_NAME = 'civic-lens-cache-v2'; // Bump version to ensure update
+// Version is auto-generated during build - DO NOT EDIT MANUALLY
+const APP_VERSION = '__APP_VERSION__';
+const CACHE_NAME = `polivis-cache-${APP_VERSION}`;
+
+// Cache duration settings
+const CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+const CHECK_UPDATE_INTERVAL = 60 * 60 * 1000; // Check for updates every hour
+
 const urlsToCache = [
   '/',
   '/index.html',
-  '/index.tsx',
   '/manifest.json',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'
 ];
 
+// Install event - cache essential resources
 self.addEventListener('install', event => {
+  console.log(`[SW ${APP_VERSION}] Installing...`);
+  // Force the waiting service worker to become the active service worker
   self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
+        console.log(`[SW ${APP_VERSION}] Caching essential resources`);
         return cache.addAll(urlsToCache);
       })
       .catch(error => {
-        console.error('Failed to cache resources during install:', error);
+        console.error(`[SW ${APP_VERSION}] Failed to cache resources:`, error);
       })
   );
 });
 
+// Activate event - clean up old caches
+self.addEventListener('activate', event => {
+  console.log(`[SW ${APP_VERSION}] Activating...`);
+  
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME && cacheName.startsWith('polivis-cache-')) {
+            console.log(`[SW ${APP_VERSION}] Deleting old cache:`, cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      // Claim all clients immediately
+      return self.clients.claim();
+    })
+  );
+});
+
+// Fetch event - network-first strategy for HTML, cache-first for assets
 self.addEventListener('fetch', event => {
-  // For navigation requests, use a network-first strategy to get the latest HTML.
-  if (event.request.mode === 'navigate') {
+  const url = new URL(event.request.url);
+  
+  // Skip chrome-extension and other non-http(s) requests
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Network-first for HTML/navigation requests
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
     event.respondWith(
       fetch(event.request)
         .then(response => {
+          // Clone the response before caching
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then(cache => {
             cache.put(event.request, responseToCache);
@@ -37,55 +73,49 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() => {
-          // If network fails, serve the cached root.
-          return caches.match('/');
+          // Network failed, try cache
+          return caches.match(event.request).then(cachedResponse => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Fallback to root
+            return caches.match('/');
+          });
         })
     );
     return;
   }
 
-  // For other requests (CSS, JS, images), use a cache-first strategy.
+  // Stale-while-revalidate for assets (JS, CSS, images)
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        // Not in cache, fetch from network
-        return fetch(event.request).then(
-          (response) => {
-            // Check if we received a valid response
-            if(!response || response.status !== 200) {
-              return response;
-            }
-
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(cachedResponse => {
+        const fetchPromise = fetch(event.request).then(networkResponse => {
+          // Only cache successful responses
+          if (networkResponse && networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
           }
-        );
-      })
-    );
-});
+          return networkResponse;
+        }).catch(() => {
+          // Network failed, return cached response if available
+          return cachedResponse;
+        });
 
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
+        // Return cached response immediately, update in background
+        return cachedResponse || fetchPromise;
+      });
     })
   );
+});
+
+// Listen for messages from the client
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log(`[SW ${APP_VERSION}] Received SKIP_WAITING message`);
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: APP_VERSION });
+  }
 });

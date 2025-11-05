@@ -9,6 +9,8 @@ import { POLITICIANS, KEY_ISSUES } from './constants';
 import type { Politician, KeyIssue } from './types';
 import { UsersIcon, TagIcon, MenuIcon, BuildingLibraryIcon } from './components/icons';
 import useBodyScrollLock from './hooks/useBodyScrollLock';
+import { initServiceWorker } from './lib/serviceWorkerManager';
+import { APP_VERSION, getVersionString } from './version';
 
 type View = 'politicians' | 'parties' | 'issues';
 
@@ -57,6 +59,12 @@ const App: React.FC = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Initialize service worker for PWA updates
+  useEffect(() => {
+    initServiceWorker();
+    console.log(`PoliVis ${getVersionString()} initialized`);
   }, []);
 
   useBodyScrollLock(selectedPoliticianId !== null || isNavOpen);
@@ -177,7 +185,9 @@ const App: React.FC = () => {
       )}
       
       <footer className="text-center py-8 mt-8 border-t border-slate-300/10">
-        <p className="text-slate-500 text-sm">&copy; 2024 Civic Lens. PWA Demo.</p>
+        <p className="text-slate-500 text-sm">
+          &copy; 2025 PoliVis • {getVersionString()} • Making politics personal and understandable
+        </p>
       </footer>
     </div>
   );
