@@ -19,17 +19,20 @@
   - Optimized production builds
 
 ### Styling
-- **Tailwind CSS** (latest) - Utility-first CSS framework
-  - Config: `tailwind.config.js`
-  - PostCSS plugin: `@tailwindcss/postcss`
+- **Tailwind CSS v4.1.16** - Utility-first CSS framework
+  - **v4 breaking change**: Uses `@import "tailwindcss"` syntax instead of v3's `@tailwind` directives
+  - **Configuration**: Now done in CSS using `@theme {}` blocks (not `tailwind.config.js`)
+  - PostCSS plugin: `@tailwindcss/postcss@4.1.16`
   - Autoprefixer for browser compatibility
-  - Main CSS entry: `src/index.css`
+  - Main CSS entry: `src/index.css` (must be imported in `index.tsx`)
+  - **Important**: CSS must be imported in entry file: `import '/src/index.css'` in `index.tsx`
 - **Google Fonts** - Inter font family (400, 500, 600, 700, 800 weights)
 
 ### CSS Processing
 - **PostCSS** - CSS transformation pipeline
-  - Config: `postcss.config.js`
-  - Plugins: Tailwind, Autoprefixer
+  - Config: `postcss.config.js` (ESM) + `postcss.config.cjs` (CommonJS fallback)
+  - Plugins: `@tailwindcss/postcss`, `autoprefixer`
+  - **Note**: Project uses `"type": "module"` in package.json, so .cjs fallback ensures compatibility
 
 ---
 
@@ -46,12 +49,12 @@
 ### Development Dependencies
 ```json
 {
-  "@tailwindcss/postcss": "^4.0.0",  // Tailwind PostCSS plugin
+  "@tailwindcss/postcss": "^4.1.16",  // Tailwind v4 PostCSS plugin
   "@types/node": "^22.14.0",          // Node.js type definitions
-  "@vitejs/plugin-react": "^5.0.0",  // Vite React plugin
-  "autoprefixer": "^10.4.0",          // CSS autoprefixer
-  "postcss": "^8.4.0",                // CSS transformation
-  "tailwindcss": "^4.0.0",            // CSS framework
+  "@vitejs/plugin-react": "^5.0.0",   // Vite React plugin
+  "autoprefixer": "^10.4.21",         // CSS autoprefixer
+  "postcss": "^8.5.6",                // CSS transformation
+  "tailwindcss": "^4.1.16",           // CSS framework (v4)
   "typescript": "~5.8.2",             // TypeScript compiler
   "vite": "^6.2.0"                    // Build tool
 }
@@ -182,6 +185,9 @@ resolve.alias: {
 ```
 
 ### `tailwind.config.js`
+**⚠️ DEPRECATED in Tailwind v4** - Configuration now done in CSS using `@theme` blocks.
+
+Legacy v3 config (not used by v4):
 ```javascript
 // Content paths (where to look for classes):
 content: [
@@ -192,20 +198,30 @@ content: [
   "./hooks/**/*.{js,ts,jsx,tsx}",
   "./lib/**/*.{js,ts,jsx,tsx}",
 ]
+```
 
-// Custom theme extensions:
-- Inter font family
-- Custom animations (fade-in, slide-up, slide-in-left, slide-out-left)
-- Custom keyframes for animations
+**Tailwind v4 uses CSS-based configuration** in `src/index.css`:
+```css
+@import "tailwindcss";
+
+@theme {
+  --font-family-sans: Inter, sans-serif;
+  --color-slate-900: #0f172a;
+  --color-slate-200: #e2e8f0;
+}
 ```
 
 ### `postcss.config.js`
 ```javascript
-plugins: {
-  '@tailwindcss/postcss': {},  // Tailwind processing
-  'autoprefixer': {}           // Browser prefixing
-}
+export default {
+  plugins: {
+    '@tailwindcss/postcss': {},  // Tailwind v4 processing
+    'autoprefixer': {}           // Browser prefixing
+  }
+};
 ```
+
+**Note**: Also includes `postcss.config.cjs` (CommonJS fallback) for tooling compatibility with `"type": "module"` in package.json.
 
 ---
 
@@ -423,11 +439,62 @@ npm run version:major    # Breaking changes (1.0.0 → 2.0.0)
 - React: https://react.dev
 - TypeScript: https://www.typescriptlang.org/docs
 - Vite: https://vitejs.dev
-- Tailwind CSS: https://tailwindcss.com/docs
+- Tailwind CSS v4: https://tailwindcss.com/docs (⚠️ Note: v4 has breaking changes from v3)
 
 ### Tools & Libraries
 - Service Workers: https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
 - PWA: https://web.dev/progressive-web-apps/
+
+---
+
+## 🛠️ Development Troubleshooting
+
+### CSS Not Loading in Dev Server
+**Symptoms**: White page, no Tailwind utilities applied, console shows v1.0.x initialized but no styling
+
+**Causes & Solutions**:
+1. **CSS import missing in entry file**
+   - ✅ Solution: Add `import '/src/index.css'` to `index.tsx`
+   - Vite requires CSS to be imported in JS for HMR to work
+
+2. **Tailwind v4 syntax not used**
+   - ✅ Solution: Use `@import "tailwindcss"` in `src/index.css` (not `@tailwind base/components/utilities`)
+   - v4 changed configuration from JS files to CSS `@theme` blocks
+
+3. **Service Worker caching old assets**
+   - ✅ Solution: Unregister SW in dev mode (added check for `import.meta.env.DEV` in `serviceWorkerManager.ts`)
+   - Clear browser cache and SW registration:
+     ```javascript
+     navigator.serviceWorker.getRegistrations().then(regs => 
+       regs.forEach(reg => reg.unregister())
+     );
+     ```
+
+4. **PostCSS config not loading**
+   - ✅ Solution: Created both `postcss.config.js` (ESM) and `postcss.config.cjs` (CommonJS fallback)
+   - Required because `package.json` has `"type": "module"`
+
+### Windows PowerShell Script Execution Issues
+**Symptom**: `npm run dev` fails with "script cannot be loaded" error
+
+**Solution**: Use `npm.cmd` instead of `npm`:
+```powershell
+npm.cmd run dev
+npm.cmd run build
+```
+
+Or set execution policy (one-time):
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### PWA Icon 404 Errors
+**Symptom**: Browser console shows 404 for icon-192.png, icon-512.png
+
+**Solution**: 
+- Add actual icon files to `public/assets/` (e.g., `PoliVis_rounded.png`, `PoliVis_splash.png`)
+- Update `manifest.json` and `index.html` to reference correct icon paths
+- Icons in `public/` folder are automatically copied to `dist/` during build
 
 ---
 
@@ -436,7 +503,7 @@ npm run version:major    # Breaking changes (1.0.0 → 2.0.0)
 ### When Starting Work
 1. Read this file + `AGENT_INSTRUCTIONS.md`
 2. Check `package.json` for current dependencies
-3. Run `npm run dev` to verify setup
+3. Run `npm.cmd run dev` (Windows) or `npm run dev` (Mac/Linux) to verify setup
 
 ### When Adding Dependencies
 1. Justify why (file size, maintenance, alternatives)
@@ -446,6 +513,7 @@ npm run version:major    # Breaking changes (1.0.0 → 2.0.0)
 ### When Changing Build Process
 1. Test locally first: `npm run build`
 2. Check `dist/` output
+3. Update this document if configuration changes
 3. Update this document if build config changes
 
 ### When Technology Changes

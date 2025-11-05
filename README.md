@@ -21,7 +21,7 @@ For full documentation, setup instructions, and development guide, see:
 git clone https://github.com/BenWassa/PoliVis.git
 cd PoliVis
 npm install
-npm run dev
+npm.cmd run dev  # Use npm.cmd on Windows to avoid execution policy issues
 ```
 
 ### macOS/Linux
@@ -33,6 +33,8 @@ npm run dev
 ```
 
 Then visit [http://localhost:3000](http://localhost:3000)
+
+> **Note**: If you see a white page in dev mode, check the [Troubleshooting section in TECH_STACK.md](TECH_STACK.md#-development-troubleshooting)
 
 ## 🌐 Live Demo
 

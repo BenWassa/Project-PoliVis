@@ -14,6 +14,12 @@ export const initServiceWorker = async () => {
     return null;
   }
 
+  // Skip service worker registration in development
+  if ((import.meta as any).env?.DEV) {
+    console.log('[App] Service Worker disabled in development mode');
+    return null;
+  }
+
   try {
     // Register service worker using Vite base so it works when app is served from a subpath
     // Use a safe cast to avoid TypeScript "ImportMeta.env" type errors in this repo
