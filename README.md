@@ -32,6 +32,12 @@ npm run dev
 
 Then visit [http://localhost:3000](http://localhost:3000)
 
+## 🌐 Live Demo
+
+**GitHub Pages:** [https://BenWassa.github.io/Project-PoliVis/](https://BenWassa.github.io/Project-PoliVis/)
+
+*Automatically deployed from the `main` branch using GitHub Actions.*
+
 ## 📱 Features
 
 - Browse Canadian politicians with detailed profiles

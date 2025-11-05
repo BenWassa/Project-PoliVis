@@ -82,6 +82,34 @@ npm run preview
 
 This will serve the built files from `dist/` on [http://localhost:4173](http://localhost:4173)
 
+## 🌐 Deployment
+
+### GitHub Pages (Automated)
+
+This project is configured for automatic deployment to GitHub Pages:
+
+1. **Enable GitHub Pages** in your repository settings:
+   - Go to Settings → Pages
+   - Source: "GitHub Actions"
+
+2. **Automatic Deployment**: 
+   - Push to `main` branch triggers automatic build and deploy
+   - Built files are deployed to `gh-pages` branch
+   - Site available at: `https://BenWassa.github.io/Project-PoliVis/`
+
+3. **Manual Deployment** (if needed):
+   - Go to Actions tab → "Deploy to GitHub Pages" → "Run workflow"
+
+### Manual Deployment
+
+For other hosting services (Netlify, Vercel, etc.):
+
+```bash
+npm run build
+```
+
+Then upload the `dist/` folder contents to your hosting provider.
+
 ## 📋 Available Scripts
 
 | Command | Description | Port |
