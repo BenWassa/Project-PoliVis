@@ -15,8 +15,11 @@ export const initServiceWorker = async () => {
   }
 
   try {
-    registration = await navigator.serviceWorker.register('/service-worker.js', {
-      scope: '/',
+    // Register service worker using Vite base so it works when app is served from a subpath
+    // Use a safe cast to avoid TypeScript "ImportMeta.env" type errors in this repo
+    const swBase = (import.meta as any).env?.BASE_URL || '/';
+    registration = await navigator.serviceWorker.register(`${swBase}service-worker.js`, {
+      scope: swBase,
     });
 
     console.log(`[App v${APP_VERSION}] Service Worker registered`, registration);
