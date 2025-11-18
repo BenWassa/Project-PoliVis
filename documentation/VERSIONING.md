@@ -4,6 +4,8 @@
 
 PoliVis uses **semantic versioning** (MAJOR.MINOR.PATCH) with automatic version injection.
 
+> Note: Versioning is automated via the project's `npm` scripts. Running `npm run version:patch|minor|major` will update `package.json`, create a commit and tag, and the build (`npm run build`) runs `scripts/update-version.mjs` which writes `version.ts` (used in the app) and injects the version into the service worker. See `scripts/update-version.mjs` for implementation details.
+
 ### Single Source of Truth
 
 All version information is stored in **`package.json`** and automatically propagated to:
